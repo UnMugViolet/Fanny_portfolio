@@ -1,0 +1,85 @@
+version: '3.8'
+
+services:
+  # Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: development
+    image: fanny-portfolio:dev
+    container_name: fanny-portfolio-app
+    restart: unless-stopped
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - fanny-portfolio
+
+  # Nginx Service
+  webserver:
+    image: nginx:alpine
+    container_name: fanny-portfolio-webserver
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/var/www/html
+      - ./docker/nginx/conf.d/:/etc/nginx/conf.d/
+    networks:
+      - fanny-portfolio
+
+  # MySQL Service
+  db:
+    image: mysql:8.0
+    container_name: fanny-portfolio-db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: fanny_portfolio
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: password
+      MYSQL_USER: laravel
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+      - ./docker/mysql/my.cnf:/etc/mysql/my.cnf
+    networks:
+      - fanny-portfolio
+
+  # Redis Service
+  redis:
+    image: redis:alpine
+    container_name: fanny-portfolio-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    networks:
+      - fanny-portfolio
+
+  # Node.js for development (Vite)
+  node:
+    image: node:18-alpine
+    container_name: fanny-portfolio-node
+    restart: unless-stopped
+    working_dir: /var/www/html
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./:/var/www/html
+    command: npm run dev
+    networks:
+      - fanny-portfolio
+    depends_on:
+      - app
+
+# Docker Networks
+networks:
+  fanny-portfolio:
+    driver: bridge
+
+# Volumes
+volumes:
+  dbdata:
+    driver: local

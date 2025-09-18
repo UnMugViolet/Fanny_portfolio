@@ -1,0 +1,22 @@
+[mysqld]
+bind-address = 0.0.0.0
+
+# Production optimizations
+max_connections = 500
+innodb_buffer_pool_size = 1G
+innodb_log_file_size = 256M
+innodb_flush_method = O_DIRECT
+innodb_file_per_table = 1
+
+# Query cache
+query_cache_size = 64M
+query_cache_type = 1
+query_cache_limit = 2M
+
+# Logging
+slow_query_log = 1
+slow_query_log_file = /var/lib/mysql/slow.log
+long_query_time = 2
+
+# Security
+local_infile = 0
