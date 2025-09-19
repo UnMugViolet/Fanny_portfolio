@@ -32,10 +32,6 @@ install: ## Install all dependencies (need php composer npm installed)
 
 ## —— Developpement ——————————————————————————————————————————————————————————————
 
-dev: ## Run the development environment
-	@echo "$(CLR_YELLOW) Launching development environment...$(CLR_RESET)"
-	@$(ARTISAN) serve --host=0.0.0.0 --port=8000 & $(NPM) run dev
-
 clean: ## Clean the cache and compiled files
 	@echo "$(CLR_YELLOW) Cleaning cache and compiled files...$(CLR_RESET)"
 	@$(ARTISAN) optimize:clear
@@ -64,6 +60,10 @@ up: ## Start the production environment
 down: ## Stop the production environment
 	@echo "$(CLR_YELLOW) Stopping production environment...$(CLR_RESET)"
 	@docker compose down
+
+logs: ## View the logs of all the containers
+	@echo "$(CLR_YELLOW) Viewing production environment logs...$(CLR_RESET)"
+	@docker compose logs -f
 
 ## —— Docker Production Deployment ————————————————————————————————————————————————————
 

@@ -40,12 +40,15 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY package*.json ./
 COPY composer.json composer.lock ./
 
-# Install dependencies and copy application code
+COPY . .
+
+# Install dependencies
 RUN composer install --optimize-autoloader --no-interaction \
     && npm install
 
-# Copy application code
-COPY . .
+# Copy and set up startup scripts
+COPY docker/scripts/laravel-start.sh /usr/local/bin/laravel-start.sh
+RUN chmod +x /usr/local/bin/laravel-start.sh
 
 # Set permissions
 RUN chown -R www-data:www-data /var/www/html \
@@ -55,7 +58,7 @@ RUN chown -R www-data:www-data /var/www/html \
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
 
-CMD ["php-fpm"]
+CMD ["/usr/local/bin/laravel-start.sh"]
 
 # ================================
 # Production Stage
@@ -102,10 +105,8 @@ COPY . .
 RUN npm run build \
     && apt-get remove -y nodejs npm \
     && apt-get autoremove -y \
-    && apt-get clean
-
-# Set permissions and create non-root user
-RUN chown -R www-data:www-data /var/www/html \
+    && apt-get clean \ 
+    && chown -R www-data:www-data /var/www/html \
     && chmod -R 755 /var/www/html/storage \
     && chmod -R 755 /var/www/html/bootstrap/cache \
     && groupadd -g 1000 www \

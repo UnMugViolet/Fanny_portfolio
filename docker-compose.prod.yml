@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Application (Production)
   app:
@@ -18,11 +16,13 @@ services:
     environment:
       - APP_ENV=production
       - APP_DEBUG=false
+    depends_on:
+      - fanny-portfolio-db
 
   # Nginx Service (Production)
   webserver:
     image: nginx:alpine
-    container_name: fanny-portfolio-webserver-prod
+    container_name: fanny-portfolio-webserver
     restart: unless-stopped
     ports:
       - "80:80"
@@ -35,37 +35,34 @@ services:
     depends_on:
       - app
 
-  # MySQL Service (Production)
+  # MariaDB Service (Production)
   db:
-    image: mysql:8.0
-    container_name: fanny-portfolio-db-prod
+    image: mariadb:latest
+    container_name: fanny-portfolio-db
     restart: unless-stopped
     environment:
-      MYSQL_DATABASE: ${DB_DATABASE}
-      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_PASSWORD: ${DB_PASSWORD}
-      MYSQL_USER: ${DB_USERNAME}
+      MARIADB_DATABASE: ${DB_DATABASE}
+      MARIADB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MARIADB_PASSWORD: ${DB_PASSWORD}
+      MARIADB_USER: ${DB_USERNAME}
+      MARIADB_AUTO_UPGRADE: 1
+    ports:
+      - "3307:3306"
     volumes:
       - dbdata:/var/lib/mysql
-      - ./docker/mysql/production.cnf:/etc/mysql/my.cnf
     networks:
       - fanny-portfolio
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      start_period: 10s
+      interval: 10s
+      timeout: 5s
+      retries: 3
 
-  # Redis Service (Production)
-  redis:
-    image: redis:alpine
-    container_name: fanny-portfolio-redis-prod
-    restart: unless-stopped
-    command: redis-server --requirepass ${REDIS_PASSWORD}
-    networks:
-      - fanny-portfolio
-
-# Docker Networks
 networks:
   fanny-portfolio:
     driver: bridge
 
-# Volumes
 volumes:
   dbdata:
     driver: local
