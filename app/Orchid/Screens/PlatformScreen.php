@@ -9,6 +9,8 @@ use Orchid\Support\Facades\Layout;
 
 class PlatformScreen extends Screen
 {
+    public $name = 'Fanny Portfolio Admin';
+    public $description = 'Bienvenue sur le panneau d\'administration de Fanny Portfolio. Explorez les fonctionnalités disponibles pour gérer votre site web.';
     /**
      * Fetch data to be displayed on the screen.
      *
@@ -53,7 +55,7 @@ class PlatformScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::view('platform::partials.update-assets'),
+            Layout::view('dashboard.custom-dashboard'),
         ];
     }
 }

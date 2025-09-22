@@ -11,37 +11,46 @@ class UserSeeder extends Seeder
 {
     public function run(): void
     {
-        // Check if the test user exists before updating or creating
-        $user = User::where('email', 'contact@fanny-seraudie.fr')->first();
+        // Default password - use environment variable or fallback
+        $userPassword = env('APP_PASSWORD');
 
-        if (!$user) {
-            User::factory()->create([
-            'name' => 'Fanny',
-            'email' => 'contact@fanny-seraudie.fr',
-            ]);
+        if (!$userPassword) {
+            $this->command->error('APP_PASSWORD is not set in the environment. Please set it to create default users.');
+            return;
         }
 
-        // Create or update the admin user
-        $admin = User::updateOrCreate(
-            ['email' => 'jaguinpaul@gmail.com'],
+        // Create or update Fanny (main user)
+        User::updateOrCreate(
+            ['email' => 'contact@fanny-seraudie.fr'],
             [
-                'name' => 'Admin User',
-                'email' => 'jaguinpaul@gmail.com',
-                'password' => Hash::make(env('APP_PASSWORD')),
+                'name' => 'Fanny Seraudie',
+                'password' => Hash::make($userPassword),
                 'permissions' => [
                     "platform.index" => true,
                     "platform.systems.roles" => true,
                     "platform.systems.users" => true,
                     "platform.systems.attachment" => true,
+                    "platform.categories" => true,
                 ],
                 'email_verified_at' => now(),
             ]
         );
 
-        // Assign the 'admin' role to the admin user
-        $adminRole = Role::where('slug', 'admin')->first();
-        if ($adminRole) {
-            $admin->addRole($adminRole);
-        }
+        // Create or update the admin user
+        User::updateOrCreate(
+            ['email' => 'jaguinpaul@gmail.com'],
+            [
+                'name' => 'Admin User',
+                'password' => Hash::make($userPassword),
+                'permissions' => [
+                    "platform.index" => true,
+                    "platform.systems.roles" => true,
+                    "platform.systems.users" => true,
+                    "platform.systems.attachment" => true,
+                    "platform.categories" => true,
+                ],
+                'email_verified_at' => now(),
+            ]
+        );
     }
 }

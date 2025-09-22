@@ -5,6 +5,8 @@ DOCKER_COMPOSE = docker compose
 ARTISAN = php artisan
 NPM = npm
 
+APP_CONTAINER = fanny-portfolio-app
+
 # Colors for output
 BOLD = \033[1m
 UNDERLINE = \033[4m
@@ -36,13 +38,12 @@ install: ## Install all dependencies (need php composer npm installed)
 
 clean: ## Clean the cache and compiled files
 	@echo "$(CLR_YELLOW) Cleaning cache and compiled files...$(CLR_RESET)"
-	@$(ARTISAN) optimize:clear
-	@$(ARTISAN) config:clear
-	@$(ARTISAN) route:clear
-	@$(ARTISAN) view:clear
-	@$(ARTISAN) cache:clear
-	@rm -rf ./public/storage/uploads/dog-races/*
-	@rm -rf ./public/storage/uploads/posts/*
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) optimize:clear
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) config:clear
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) route:clear
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) view:clear
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) cache:clear
+	@rm -rf ./public/storage/uploads/*
 
 fclean: ## Run database migrations
 	@echo "$(CLR_YELLOW) Running database migrations...$(CLR_RESET)"
@@ -51,7 +52,15 @@ fclean: ## Run database migrations
 
 user: ## Create a new admin user
 	@echo "$(CLR_YELLOW) Creating a new user...$(CLR_RESET)"
-	@$(DOCKER) exec -it fanny-portfolio-app $(ARTISAN) orchid:admin
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) orchid:admin
+
+migrate: ## Run database migrations
+	@echo "$(CLR_YELLOW) Running database migrations...$(CLR_RESET)"
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) migrate
+
+migrate-seed: ## Run database migrations with seeding
+	@echo "$(CLR_YELLOW) Running database migrations with seeding...$(CLR_RESET)"
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) migrate --seed
 
 ## —— Docker Utils ———————————————————————————————————————————————————————————————————
 
