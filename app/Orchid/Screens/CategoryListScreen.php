@@ -22,10 +22,31 @@ class CategoryListScreen extends Screen
      */
     public function query(): iterable
     {
+        $categories = Category::query();
+
+        // Handle name filter
+        if (request()->has('filter.name')) {
+            $categories->where('name', 'like', '%' . request('filter.name') . '%');
+        }
+
+        // Handle sorting
+        $sort = request('sort', 'order');
+        $direction = 'asc';
+        
+        if (str_starts_with($sort, '-')) {
+            $direction = 'desc';
+            $sort = substr($sort, 1);
+        }
+
+        $categories->orderBy($sort, $direction);
+
+        // If no specific sort is applied, add secondary sort by name
+        if ($sort !== 'name') {
+            $categories->orderBy('name', 'asc');
+        }
+
         return [
-            'categories' => Category::withCount('projects')
-                ->orderBy('name')
-                ->paginate()
+            'categories' => $categories->paginate()
         ];
     }
 
@@ -55,9 +76,9 @@ class CategoryListScreen extends Screen
     public function commandBar(): iterable
     {
         return [
-            Link::make('Create new')
+            Link::make('Ajouter')
                 ->icon('plus')
-                ->route('platform.category.edit')
+                ->route('platform.category.create')
         ];
     }
 
@@ -70,7 +91,14 @@ class CategoryListScreen extends Screen
     {
         return [
             Layout::table('categories', [
-                TD::make('name', 'Name')
+                TD::make('order', 'Ordre')
+                    ->sort()
+                    ->width('100px')
+                    ->render(function (Category $category) {
+                        return $category->order ?? 0;
+                    }),
+
+                TD::make('name', 'Nom')
                     ->sort()
                     ->cantHide()
                     ->filter(TD::FILTER_TEXT)
@@ -81,8 +109,21 @@ class CategoryListScreen extends Screen
 
                 TD::make('slug', 'Slug')
                     ->sort()
+                    ->width('150px')
                     ->render(function (Category $category) {
-                        return '<code>' . $category->slug . '</code>';
+                        return Link::make($category->slug)
+                            ->href('/' . $category->slug)
+                            ->target('_blank')
+                            ->class('font-monospace text-decoration-none')
+                            ->style('padding: 2px 6px; border-radius: 4px; background-color: #90EE90;');
+                    }),
+
+                TD::make('is_main', 'Principal')
+                    ->sort()
+                    ->render(function (Category $category) {
+                        return $category->is_main ?
+                            '<span style="color: #059669; font-weight: bold;">✓ Oui</span>' :
+                            '<span style="color: #6b7280; font-weight: bold;">✘ Non</span>';
                     }),
 
                 TD::make('description', 'Description')
@@ -90,33 +131,28 @@ class CategoryListScreen extends Screen
                         return Str::limit($category->description, 50);
                     }),
 
-                TD::make('projects_count', 'Projects')
+                TD::make('created_at', 'Créé le')
                     ->sort()
                     ->render(function (Category $category) {
-                        return $category->projects_count;
+                        return $category->created_at->format('j M Y');
                     }),
 
-                TD::make('created_at', 'Created')
-                    ->sort()
-                    ->render(function (Category $category) {
-                        return $category->created_at->format('M j, Y');
-                    }),
 
                 TD::make(__('Actions'))
                     ->align(TD::ALIGN_CENTER)
                     ->width('100px')
                     ->render(function (Category $category) {
                         return DropDown::make()
-                            ->icon('options-vertical')
+                            ->icon('three-dots-vertical')
                             ->list([
 
-                                Link::make(__('Edit'))
+                                Link::make(__('Modifier'))
                                     ->route('platform.category.edit', $category->id)
                                     ->icon('pencil'),
 
-                                Button::make(__('Delete'))
+                                Button::make(__('Supprimer'))
                                     ->icon('trash')
-                                    ->confirm(__('Are you sure you want to delete this category?'))
+                                    ->confirm(__('Êtes-vous sûr de vouloir supprimer cette catégorie ?'))
                                     ->method('remove')
                                     ->parameters([
                                         'id' => $category->id,
@@ -134,6 +170,6 @@ class CategoryListScreen extends Screen
     {
         Category::findOrFail($request->get('id'))->delete();
 
-        Alert::info(__('Category deleted successfully.'));
+        Alert::info(__('Catégorie supprimée avec succès.'));
     }
 }

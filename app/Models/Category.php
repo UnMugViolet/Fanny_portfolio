@@ -4,9 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Orchid\Filters\Filterable;
 
 class Category extends Model
 {
+    use Filterable;
     /**
      * The attributes that are mass assignable.
      *
@@ -16,7 +18,54 @@ class Category extends Model
         'name',
         'slug',
         'description',
+        'order',
+        'is_main',
     ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array<string, string>
+     */
+    protected $casts = [
+        'order' => 'integer',
+        'is_main' => 'boolean',
+    ];
+
+    /**
+     * The attributes for which you can use filters in url.
+     *
+     * @var array
+     */
+    protected $allowedFilters = [
+        'name',
+        'slug',
+        'description',
+        'is_main',
+        'order',
+    ];
+
+    /**
+     * The attributes for which can use sort in url.
+     *
+     * @var array
+     */
+    protected $allowedSorts = [
+        'name',
+        'slug',
+        'order',
+        'is_main',
+        'created_at',
+        'updated_at',
+    ];
+
+    /*
+     * Get all main categories ordered by their position.
+     */
+    public function getMainCategories()
+    {
+        return $this->where('is_main', true)->orderBy('order')->get();
+    }
 
     /* ========== Relations ========== */
 
@@ -27,4 +76,5 @@ class Category extends Model
     {
         return $this->belongsToMany(Project::class);
     }
+
 }

@@ -18,6 +18,7 @@ use App\Orchid\Screens\User\UserEditScreen;
 use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
 use App\Orchid\Screens\CategoryListScreen;
+use App\Orchid\Screens\CategoryEditScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
 
@@ -92,19 +93,16 @@ Route::screen('categories', CategoryListScreen::class)
         ->parent('platform.index')
         ->push(__('Categories'), route('platform.categories')));
 
-// Example...
-Route::screen('example', ExampleScreen::class)
-    ->name('platform.example')
+// Platform > Categories > Edit
+Route::screen('categories/{category}/edit', CategoryEditScreen::class)
+    ->name('platform.category.edit')
+    ->breadcrumbs(fn (Trail $trail, $category) => $trail
+        ->parent('platform.categories')
+        ->push($category->name ?? __('Edit'), route('platform.category.edit', $category)));
+
+// Platform > Categories > Create
+Route::screen('categories/create', CategoryEditScreen::class)
+    ->name('platform.category.create')
     ->breadcrumbs(fn (Trail $trail) => $trail
-        ->parent('platform.index')
-        ->push('Example Screen'));
-
-Route::screen('/examples/form/fields', ExampleFieldsScreen::class)->name('platform.example.fields');
-Route::screen('/examples/form/advanced', ExampleFieldsAdvancedScreen::class)->name('platform.example.advanced');
-Route::screen('/examples/form/editors', ExampleTextEditorsScreen::class)->name('platform.example.editors');
-Route::screen('/examples/form/actions', ExampleActionsScreen::class)->name('platform.example.actions');
-
-Route::screen('/examples/layouts', ExampleLayoutsScreen::class)->name('platform.example.layouts');
-Route::screen('/examples/grid', ExampleGridScreen::class)->name('platform.example.grid');
-Route::screen('/examples/charts', ExampleChartsScreen::class)->name('platform.example.charts');
-Route::screen('/examples/cards', ExampleCardsScreen::class)->name('platform.example.cards');
+        ->parent('platform.categories')
+        ->push(__('Create'), route('platform.category.create')));
