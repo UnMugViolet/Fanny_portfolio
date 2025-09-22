@@ -1,5 +1,7 @@
 COMPOSER = composer
 COMPOSER_PROD = composer2
+DOCKER = docker
+DOCKER_COMPOSE = docker compose
 ARTISAN = php artisan
 NPM = npm
 
@@ -49,21 +51,21 @@ fclean: ## Run database migrations
 
 user: ## Create a new admin user
 	@echo "$(CLR_YELLOW) Creating a new user...$(CLR_RESET)"
-	@$(ARTISAN) orchid:admin
+	@$(DOCKER) exec -it fanny-portfolio-app $(ARTISAN) orchid:admin
 
 ## —— Docker Utils ———————————————————————————————————————————————————————————————————
 
 up: ## Start the production environment
 	@echo "$(CLR_YELLOW) Starting production environment...$(CLR_RESET)"
-	@docker compose up -d
+	@$(DOCKER_COMPOSE) up -d
 
 down: ## Stop the production environment
 	@echo "$(CLR_YELLOW) Stopping production environment...$(CLR_RESET)"
-	@docker compose down
+	@$(DOCKER_COMPOSE) down
 
 logs: ## View the logs of all the containers
 	@echo "$(CLR_YELLOW) Viewing production environment logs...$(CLR_RESET)"
-	@docker compose logs -f
+	@$(DOCKER_COMPOSE) logs -f
 
 ## —— Docker Production Deployment ————————————————————————————————————————————————————
 
@@ -75,8 +77,8 @@ build-frontend: ## Build frontend assets
 
 build: build-frontend ## Build Docker container after frontend is ready
 	@echo "$(CLR_YELLOW)🐳 Building Docker container...$(CLR_RESET)"
-	@docker compose build --no-cache
-	@docker compose push
+	@$(DOCKER_COMPOSE) build --no-cache
+	@$(DOCKER_COMPOSE) push
 
 deploy: ## Complete secure Docker deployment
 	@echo "🔄 Preparing for prod environment"
