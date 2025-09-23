@@ -53,7 +53,7 @@ migrate: ## Run database migrations
 
 migrate-seed: ## Run database migrations with seeding
 	@echo "$(CLR_YELLOW) Running database migrations with seeding...$(CLR_RESET)"
-	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) migrate --seed
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) migrate:fresh --seed
 
 ## —— Docker Utils ———————————————————————————————————————————————————————————————————
 

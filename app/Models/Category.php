@@ -19,7 +19,6 @@ class Category extends Model
         'slug',
         'description',
         'order',
-        'is_main',
     ];
 
     /**
@@ -29,7 +28,6 @@ class Category extends Model
      */
     protected $casts = [
         'order' => 'integer',
-        'is_main' => 'boolean',
     ];
 
     /**
@@ -41,7 +39,6 @@ class Category extends Model
         'name',
         'slug',
         'description',
-        'is_main',
         'order',
     ];
 
@@ -54,18 +51,9 @@ class Category extends Model
         'name',
         'slug',
         'order',
-        'is_main',
         'created_at',
         'updated_at',
     ];
-
-    /*
-     * Get all main categories ordered by their position.
-     */
-    public function getMainCategories()
-    {
-        return $this->where('is_main', true)->orderBy('order')->get();
-    }
 
     /* ========== Relations ========== */
 

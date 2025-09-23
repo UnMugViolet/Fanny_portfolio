@@ -107,7 +107,7 @@ class CategoryListScreen extends Screen
                             ->route('platform.category.edit', $category);
                     }),
 
-                TD::make('slug', 'Slug')
+                TD::make('slug', 'Lien')
                     ->sort()
                     ->width('150px')
                     ->render(function (Category $category) {
@@ -116,14 +116,6 @@ class CategoryListScreen extends Screen
                             ->target('_blank')
                             ->class('font-monospace text-decoration-none')
                             ->style('padding: 2px 6px; border-radius: 4px; background-color: #90EE90;');
-                    }),
-
-                TD::make('is_main', 'Principal')
-                    ->sort()
-                    ->render(function (Category $category) {
-                        return $category->is_main ?
-                            '<span style="color: #059669; font-weight: bold;">✓ Oui</span>' :
-                            '<span style="color: #6b7280; font-weight: bold;">✘ Non</span>';
                     }),
 
                 TD::make('description', 'Description')
