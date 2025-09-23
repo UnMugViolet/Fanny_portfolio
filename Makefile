@@ -25,14 +25,7 @@ install: ## Install all dependencies (need php composer npm installed)
 	@sudo -v && sudo apt install php8.3-curl php8.3-mysql php8.3-xml php8.3-fpm php8.3-mbstring mysql-server -y
 	@$(COMPOSER) update --with-all-dependencies
 	@$(COMPOSER) install
-	@$(NPM) install
-	@$(ARTISAN) orchid:install
-	@$(ARTISAN) key:generate
-	@$(ARTISAN) migrate:fresh --seed
-	@$(ARTISAN) storage:link
-	@$(ARTISAN) config:cache
-	@$(ARTISAN) route:cache
-	@$(ARTISAN) view:cache
+	@$(NPM) install --force
 
 ## —— Developpement ——————————————————————————————————————————————————————————————
 
@@ -67,6 +60,7 @@ migrate-seed: ## Run database migrations with seeding
 up: ## Start the production environment
 	@echo "$(CLR_YELLOW) Starting production environment...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) up -d
+	@$(MAKE) clean
 
 down: ## Stop the production environment
 	@echo "$(CLR_YELLOW) Stopping production environment...$(CLR_RESET)"
@@ -75,6 +69,11 @@ down: ## Stop the production environment
 logs: ## View the logs of all the containers
 	@echo "$(CLR_YELLOW) Viewing production environment logs...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) logs -f
+
+re: ## Restart the docker containers
+	@echo "$(CLR_YELLOW) Restarting production environment...$(CLR_RESET)"
+	@$(MAKE) down
+	@$(MAKE) up
 
 ## —— Docker Production Deployment ————————————————————————————————————————————————————
 

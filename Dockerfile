@@ -50,10 +50,6 @@ RUN composer install --optimize-autoloader --no-interaction \
 COPY docker/scripts/laravel-start.sh /usr/local/bin/laravel-start.sh
 RUN chmod +x /usr/local/bin/laravel-start.sh
 
-# Set permissions
-RUN chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache
 
 # Expose port 9000 for PHP-FPM
 EXPOSE 9000
@@ -107,8 +103,6 @@ RUN npm run build \
     && apt-get autoremove -y \
     && apt-get clean \ 
     && chown -R www-data:www-data /var/www/html \
-    && chmod -R 755 /var/www/html/storage \
-    && chmod -R 755 /var/www/html/bootstrap/cache \
     && groupadd -g 1000 www \
     && useradd -u 1000 -ms /bin/bash -g www www
 

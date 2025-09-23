@@ -9,13 +9,9 @@ services:
     container_name: fanny-portfolio-app
     restart: unless-stopped
     working_dir: /var/www/html
-    environment:
-      - DB_CONNECTION=${DB_CONNECTION}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
-      - DB_DATABASE=${DB_DATABASE}
-      - DB_USERNAME=${DB_USERNAME}
-      - DB_PASSWORD=${DB_PASSWORD}
+    command: ["/usr/local/bin/laravel-start.sh"]
+    env_file:
+      - .env
     volumes:
       - ./:/var/www/html
       - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
