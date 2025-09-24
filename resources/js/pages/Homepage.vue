@@ -1,33 +1,45 @@
 <template>
   <div class="w-full">
-    <div class="text-center py-3 md:py-16 md:px-4">
-      <h1 class="text-2xl md:text-4xl font-bold text-gray-800 mb-6">Bienvenue sur mon portfolio</h1>
-      <p class="text-sm md:text-lg text-gray-600 mb-8 px-2 md:px-11">
+    <div class="text-center py-3 md:py-10 md:px-4">
+      <h1 class="text-2xl md:text-4xl font-bold text-brand-burgundy mb-6">
+        Bienvenue sur mon portfolio
+      </h1>
+      <p class="text-sm md:text-lg text-brand-burgundy mb-8 px-2 md:px-11">
         Passionnée de dessin depuis le plus jeune âge et fraîchement diplômée d'une école d'animation 2D, j'ai créé un site qui présente mon travail, que ce soit en animation ou en illustration. <br />
         Cet espace est dédié à partager ma passion avec vous. Bienvenue dans mon univers.
       </p>
     </div>
-    
-    <div class="h-60vh w-full text-left space-y-4">
-      <div 
-        v-for="category in categories" :key="category.id" 
-        class="flex flex-col w-full py md:py-3"> 
-        <router-link 
-          :to="{ name: 'Category', params: { slug: category.slug } }"
-          class="block w-full"
-          @click="handleCategoryClick"
-          @mouseenter="handleMouseEnter(category.id)"
-          @mouseleave="handleMouseLeave(category.id)"
-        >
-          <h2 
-            class="w-full text-5xl md:text-9xl uppercase font-bold font-heading mb-2 transition-colors duration-300"
-            :style="{ color: getCategoryColor(category.id) }">
-            {{ category.name }}
-          </h2>
-        </router-link>
-        <hr class="border-t-3 border-black w-full" />
+    <section class="flex md:flex-row flex-col justify-center items-center md:gap-10">
+      <div class="w-full md:w-1/2 text-left space-y-4">
+        <div 
+          v-for="category in categories" :key="category.id" 
+          class="flex flex-col w-full py md:py-3"> 
+          <router-link 
+            :to="{ name: 'Category', params: { slug: category.slug } }"
+            class="block w-full"
+            @click="handleCategoryClick"
+            @mouseenter="handleMouseEnter(category.id)"
+            @mouseleave="handleMouseLeave(category.id)"
+          >
+            <h2 
+              class="w-full text-5xl md:text-7xl uppercase font-bold font-heading mb-2 transition-colors duration-300"
+              :style="{ color: getCategoryColor(category.id) }">
+              {{ category.name }}
+            </h2>
+          </router-link>
+          <hr class="border-t-3 border-brand-burgundy w-full" />
+        </div>
       </div>
-    </div>
+      <div class="md:w-1/2 w-full p-4 md:px-25 pt-10">
+        <img 
+          src="/img/cover-image-homepage.webp" 
+          alt="Fanny Séraudie Portfolio Couverture"
+          aria-label="Image de couverture du portfolio de Fanny Séraudie" 
+          class="w-full h-auto object-cover rounded-lg shadow-lg"
+        />
+
+      </div>
+    </section>
   </div> 
 </template>
 
@@ -37,17 +49,14 @@ import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const categories = ref([])
-const colors = [
-  '#FF5733', // Red-Orange
-  '#FF33A8', // Hot Pink
-  '#75FF33', // Lime Green
-  '#FF8F33', // Orange
-  '#3380FF', // Blue
-  '#FF3366', // Red-Pink
-  '#33FFAA', // Mint Green
-  '#8A33FF', // Purple
-  '#FFD700', // Gold
-  '#FF6B35', // Coral
+const colors = [ 
+  '#b7d8fe',
+  '#d1c260',
+  '#f94e19',
+  '#fcd1cd',
+  '#c28d1c',
+  '#4a90e2',
+  '#7ed6df',
 ]
 
 // Track hover states for each category
@@ -70,9 +79,9 @@ const getRandomColor = () => {
 // Get the color for a specific category (black by default, random on hover)
 const getCategoryColor = (categoryId) => {
   if (hoveredCategories.value.has(categoryId)) {
-    return categoryColors.value.get(categoryId) || '#000'
+    return categoryColors.value.get(categoryId) || '#6b2338'
   }
-  return '#000' // Default black color
+  return '#6b2338' // Default color Burgundy
 }
 
 // Handle mouse enter - generate new random color each time

@@ -7,4 +7,12 @@
   --font-sans: "Sen", ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
   --font-heading: "Work Sans", ui-sans-serif, system-ui, sans-serif;
   --font-body: "Sen", ui-sans-serif, system-ui, sans-serif;
+
+
+  --color-brand-orange: #f94e19;
+  --color-brand-burgundy: #6b2338;
+  --color-brand-blue: #b7d8fe;
+  --color-brand-yellow: #d1c260;
+  --color-brand-pink: #fcd1cd;
+  --color-brand-gold: #c28d1c;
 }

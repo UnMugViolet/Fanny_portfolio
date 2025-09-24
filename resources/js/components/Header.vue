@@ -3,8 +3,8 @@
     <div class="w-full flex justify-between items-center">
         <!-- Logo -->
       <router-link to="/" class="flex items-center w-full">
-        <img src="/img/svg/logo.svg" alt="Logo Fanny Séraudie" class="w-9 h-6 mr-2" />
-        <h1 class="text-xl font-bold font-heading">Fanny Séraudie</h1>
+		<img src="/img/svg/logo.svg" alt="Logo Fanny Séraudie" class="w-9 h-6 mr-2" />
+		<h1 class="text-xl font-bold font-heading text-brand-burgundy">Fanny Séraudie</h1>
       </router-link>
 
       <!-- Mobile burger menu button -->
@@ -15,15 +15,15 @@
       >
         <div class="w-6 h-6 flex flex-col justify-center space-y-1">
           <span 
-            class="block h-0.5 bg-gray-800 transition-all duration-300 transform origin-center"
+            class="block h-0.5 bg-brand-burgundy transition-all duration-300 transform origin-center"
             :class="{ 'rotate-45 translate-y-1': isMobileMenuOpen, 'rotate-0 translate-y-0': !isMobileMenuOpen }"
           ></span>
           <span 
-            class="block h-0.5 bg-gray-800 transition-all duration-300"
+            class="block h-0.5 bg-brand-burgundy transition-all duration-300"
             :class="{ 'opacity-0': isMobileMenuOpen, 'opacity-100': !isMobileMenuOpen }"
           ></span>
           <span 
-            class="block h-0.5 bg-gray-800 transition-all duration-300 transform origin-center"
+            class="block h-0.5 bg-brand-burgundy transition-all duration-300 transform origin-center"
             :class="{ '-rotate-45 -translate-y-1': isMobileMenuOpen, 'rotate-0 translate-y-0': !isMobileMenuOpen }"
           ></span>
         </div>
@@ -37,7 +37,7 @@
           v-for="category in categories" 
           :key="category.id" 
           :to="`/${category.slug}`" 
-          class="text-gray-800 hover:text-gray-600 transition-colors font-medium">
+          class="text-brand-burgundy hover:text-gray-600 transition-colors font-medium">
           {{ category.name }}
         </router-link>
       </div>
