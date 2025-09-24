@@ -71,12 +71,15 @@ WORKDIR /var/www/html
 RUN apt-get update && apt-get install -y \
     curl \
     git \
+    gosu \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libonig-dev \
     libpng-dev \
     libxml2-dev \
     libzip-dev \
+    nginx \
+    supervisor \
     unzip \
     zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
@@ -89,16 +92,14 @@ RUN apt-get update && apt-get install -y \
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy package files first for better caching
-COPY package*.json ./
-COPY composer.json composer.lock ./
-
-# Install dependencies, copy code, build assets, and cleanup
-RUN composer install --no-dev --optimize-autoloader --no-interaction \
-    && npm ci --only=production
-
-# Copy application code
+# Copy application code first
 COPY . .
+
+# Install PHP dependencies (production only)
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Install ALL npm dependencies for building (including dev dependencies)
+RUN npm ci
 
 # Build frontend assets and cleanup
 RUN npm run build \
@@ -108,14 +109,50 @@ RUN npm run build \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
+    && rm -f /var/www/html/public/storage \
+    && php artisan storage:link \
     && chown -R www-data:www-data /var/www/html \
     && groupadd -g 1000 www \
     && useradd -u 1000 -ms /bin/bash -g www www
 
-# Switch to non-root user
-USER www
+# Copy Nginx configuration
+COPY docker/nginx/prod.conf /etc/nginx/sites-available/default
+COPY docker/nginx/prod.conf /etc/nginx/sites-enabled/default
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 9000
+# Copy and set up startup scripts
+COPY docker/scripts/laravel-start.sh /usr/local/bin/laravel-start.sh
+COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-CMD ["php-fpm"]
+# Create supervisor configuration for running both Nginx and PHP-FPM
+RUN echo '[supervisord]' > /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'nodaemon=true' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'user=root' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo '' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo '[program:php-fpm]' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'command=php-fpm --nodaemonize' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'user=root' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'priority=5' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stdout_logfile=/dev/stdout' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stdout_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stderr_logfile=/dev/stderr' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stderr_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo '' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo '[program:nginx]' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'command=nginx -g "daemon off;"' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'user=root' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'autostart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'autorestart=true' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'priority=10' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stdout_logfile=/dev/stdout' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stdout_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stderr_logfile=/dev/stderr' >> /etc/supervisor/conf.d/supervisord.conf && \
+    echo 'stderr_logfile_maxbytes=0' >> /etc/supervisor/conf.d/supervisord.conf && \
+    chmod +x /usr/local/bin/laravel-start.sh
+
+# Expose port 80 for HTTP
+EXPOSE 80
+
+# Run as root so the startup script can set permissions
+CMD ["/usr/local/bin/laravel-start.sh"]

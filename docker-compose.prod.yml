@@ -13,11 +13,11 @@ services:
       - ./docker/php/production.ini:/usr/local/etc/php/conf.d/local.ini
     networks:
       - fanny-portfolio
-    environment:
-      - APP_ENV=production
-      - APP_DEBUG=false
+    env_file:
+      - .env
     depends_on:
-      - fanny-portfolio-db
+      db:
+        condition: service_healthy
 
   # Nginx Service (Production)
   webserver:
@@ -47,7 +47,7 @@ services:
       MARIADB_USER: ${DB_USERNAME}
       MARIADB_AUTO_UPGRADE: 1
     ports:
-      - "3307:3306"
+      - "3306:3306"
     volumes:
       - dbdata:/var/lib/mysql
     networks:

@@ -31,9 +31,12 @@ chmod -R 777 /var/www/html/bootstrap/cache
 
 echo "Storage permissions set successfully!"
 
+# Switch to www user for Laravel commands
+echo "Switching to www user for Laravel operations..."
+
 # Wait for database
 echo "Checking database connection..."
-until php -r "
+until gosu www php -r "
 \$pdo = new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}');
 echo 'Database connection successful\n';
 " 2>/dev/null; do
@@ -43,17 +46,18 @@ done
 
 echo "Database is ready!"
 
-php artisan config:clear
+gosu www php artisan config:clear
 
 # Run migrations if needed
 echo "Running database migrations..."
-php artisan migrate --force
+gosu www php artisan migrate --force
 
-php artisan cache:clear
+gosu www php artisan cache:clear
 
 # Cache configuration for better performance
-php artisan config:cache
+gosu www php artisan config:cache
 
-# Start PHP-FPM
-echo "Starting PHP-FPM..."
-exec php-fpm
+
+# Start both PHP-FPM and Nginx using supervisor
+echo "Starting PHP-FPM and Nginx with supervisor..."
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
