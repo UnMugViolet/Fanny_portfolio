@@ -15,15 +15,15 @@
       >
         <div class="w-6 h-6 flex flex-col justify-center space-y-1">
           <span 
-            class="block h-0.5 bg-brand-burgundy transition-all duration-300 transform origin-center"
+            class="block h-0.5 bg-brand-black transition-all duration-300 transform origin-center"
             :class="{ 'rotate-45 translate-y-1': isMobileMenuOpen, 'rotate-0 translate-y-0': !isMobileMenuOpen }"
           ></span>
           <span 
-            class="block h-0.5 bg-brand-burgundy transition-all duration-300"
+            class="block h-0.5 bg-brand-black transition-all duration-300"
             :class="{ 'opacity-0': isMobileMenuOpen, 'opacity-100': !isMobileMenuOpen }"
           ></span>
           <span 
-            class="block h-0.5 bg-brand-burgundy transition-all duration-300 transform origin-center"
+            class="block h-0.5 bg-brand-black transition-all duration-300 transform origin-center"
             :class="{ '-rotate-45 -translate-y-1': isMobileMenuOpen, 'rotate-0 translate-y-0': !isMobileMenuOpen }"
           ></span>
         </div>
@@ -37,7 +37,7 @@
           v-for="category in categories" 
           :key="category.id" 
           :to="`/${category.slug}`" 
-          class="text-brand-burgundy hover:text-gray-600 transition-colors font-medium">
+          class="text-brand-black hover:text-gray-600 transition-colors font-medium">
           {{ category.name }}
         </router-link>
       </div>
@@ -63,12 +63,12 @@
       </div>
 
       <!-- Menu content -->
-      <div class="flex flex-col justify-center items-center h-full px-8">
+      <div class="flex flex-col justify-center items-center h-full px-8 bg-brand-blue">
         <div class="space-y-8 text-center">
           <router-link 
             to="/" 
             @click="closeMobileMenu"
-            class="block text-4xl font-bold font-heading text-gray-800 hover:text-gray-600 transition-colors"
+            class="block text-4xl font-bold font-heading text-brand-black hover:text-gray-600 transition-colors"
           >
             Accueil
           </router-link>
@@ -79,7 +79,7 @@
               :key="category.id" 
               :to="`/${category.slug}`" 
               @click="closeMobileMenu"
-              class="block text-3xl font-medium text-gray-700 hover:text-gray-900 transition-colors"
+              class="block text-3xl font-medium text-brand-black hover:text-gray-900 transition-colors"
             >
               {{ category.name }}
             </router-link>

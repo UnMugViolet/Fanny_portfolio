@@ -1,16 +1,16 @@
 <template>
   <div class="w-full">
-    <div class="text-center py-3 md:py-10 md:px-4">
+    <div class="text-center py-3 md:py-10 px-2 md:px-4">
       <h1 class="text-2xl md:text-4xl font-bold text-brand-burgundy mb-6">
         Bienvenue sur mon portfolio
       </h1>
-      <p class="text-sm md:text-lg text-brand-burgundy mb-8 px-2 md:px-11">
+      <p class="text-sm md:text-lg text-brand-black mb-8 px-2 md:px-11">
         Passionnée de dessin depuis le plus jeune âge et fraîchement diplômée d'une école d'animation 2D, j'ai créé un site qui présente mon travail, que ce soit en animation ou en illustration. <br />
         Cet espace est dédié à partager ma passion avec vous. Bienvenue dans mon univers.
       </p>
     </div>
     <section class="flex md:flex-row flex-col justify-center items-center md:gap-10">
-      <div class="w-full md:w-1/2 text-left space-y-4">
+      <div class="w-full md:w-1/2 text-left space-y-4 px-2 md:px-0">
         <div 
           v-for="category in categories" :key="category.id" 
           class="flex flex-col w-full py md:py-3"> 
@@ -22,12 +22,12 @@
             @mouseleave="handleMouseLeave(category.id)"
           >
             <h2 
-              class="w-full text-5xl md:text-7xl uppercase font-bold font-heading mb-2 transition-colors duration-300"
+              class="w-full text-4xl md:text-7xl uppercase font-bold font-heading mb-2 transition-colors duration-300"
               :style="{ color: getCategoryColor(category.id) }">
               {{ category.name }}
             </h2>
           </router-link>
-          <hr class="border-t-3 border-brand-burgundy w-full" />
+          <hr class="border-t-3 border-brand-black w-full" />
         </div>
       </div>
       <div class="md:w-1/2 w-full p-4 md:px-25 pt-10">
@@ -79,9 +79,9 @@ const getRandomColor = () => {
 // Get the color for a specific category (black by default, random on hover)
 const getCategoryColor = (categoryId) => {
   if (hoveredCategories.value.has(categoryId)) {
-    return categoryColors.value.get(categoryId) || '#6b2338'
+    return categoryColors.value.get(categoryId) || '#010101'
   }
-  return '#6b2338' // Default color Burgundy
+  return '#010101' // Default color Black
 }
 
 // Handle mouse enter - generate new random color each time
