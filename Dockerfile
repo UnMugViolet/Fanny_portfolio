@@ -21,8 +21,6 @@ RUN apt-get update && apt-get install -y \
     libxml2-dev \
     libzip-dev \
     locales \
-    nodejs \
-    npm \
     optipng \
     pngquant \
     unzip \
@@ -32,6 +30,10 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Node.js 22.x LTS (required for Tailwind v4 and latest packages)
+RUN curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs
 
 # Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
@@ -44,7 +46,8 @@ COPY . .
 
 # Install dependencies
 RUN composer install --optimize-autoloader --no-interaction \
-    && npm install
+    && npm install \
+    && npm audit fix --force || true
 
 # Copy and set up startup scripts
 COPY docker/scripts/laravel-start.sh /usr/local/bin/laravel-start.sh
@@ -74,12 +77,12 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     libxml2-dev \
     libzip-dev \
-    nodejs \
-    npm \
     unzip \
     zip \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip \
+    && curl -fsSL https://deb.nodesource.com/setup_22.x | bash - \
+    && apt-get install -y nodejs \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
@@ -97,11 +100,14 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction \
 # Copy application code
 COPY . .
 
-# Build frontend assets and remove Node.js
+# Build frontend assets and cleanup
 RUN npm run build \
+    && npm cache clean --force \
+    && rm -rf node_modules \
     && apt-get remove -y nodejs npm \
     && apt-get autoremove -y \
-    && apt-get clean \ 
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/* \
     && chown -R www-data:www-data /var/www/html \
     && groupadd -g 1000 www \
     && useradd -u 1000 -ms /bin/bash -g www www

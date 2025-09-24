@@ -15,8 +15,17 @@
 	
 	<!-- Styles and Scripts -->
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
+	
+	<!-- Pass data to Vue -->
+	<script>
+		window.appData = {
+			categories: @json($categories ?? []),
+			category: @json($category ?? null),
+			projects: @json($projects ?? [])
+		};
+	</script>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-amber-50 font-sans">
 	<div id="app">
 	</div>
 </body>

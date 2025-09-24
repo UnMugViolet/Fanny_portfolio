@@ -7,7 +7,6 @@
       </header>
 
       <section v-if="projects && projects.length > 0" class="projects-grid">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Projects</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <div 
             v-for="project in projects" 
@@ -28,8 +27,8 @@
                 <span 
                   v-for="tool in project.tools" 
                   :key="tool.id"
+				          :style ="{ backgroundColor: tool.color + '20', color: tool.color, border: '1px solid ' + tool.color }"
                   class="px-3 py-1 text-sm rounded-full"
-				  :style ="{ backgroundColor: tool.color + '20', color: tool.color, border: '1px solid ' + tool.color }"
                 >
                   {{ tool.name }}
                 </span>
@@ -47,43 +46,68 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRoute } from 'vue-router'
 
 const route = useRoute()
-const category = ref({})
+const categories = ref([])
 const projects = ref([])
-const loading = ref(true)
-const error = ref(null)
+const category = ref({})
+const tools = ref([])
+const loading = ref(false)
 
-const fetchCategoryData = async () => {
-	try {
-	loading.value = true
-	const slug = route.params.slug
-	
-	// Fetch category data from Laravel API
-	const response = await fetch(`/api/categories/${slug}`)
-	
-	if (!response.ok) {
-		throw new Error('Category not found')
-	}
-	
-	const data = await response.json()
-	category.value = data.category
-	projects.value = data.projects || []
-	
-	} catch (err) {
-	error.value = err.message
-	console.error('Error fetching category:', err)
-	} finally {
-	loading.value = false
-	}
+const loadCategoryData = async (slug) => {
+  // Prevent multiple simultaneous requests
+  if (loading.value) {
+    return
+  }
+  
+  try {
+    loading.value = true
+    
+    // Fetch category data from the server
+    const response = await fetch(`/api/categories/${slug}`)
+    if (!response.ok) {
+      throw new Error('Failed to fetch category data')
+    }
+    
+    const data = await response.json()
+    category.value = data.category
+    projects.value = data.projects
+    
+  } catch (error) {
+    console.error('Error loading category data:', error)
+  } finally {
+    loading.value = false
+  }
 }
 
-onMounted(() => {
-	fetchCategoryData()
-})
+const loadInitialData = () => {
+  // Load categories from window.appData (for navigation)
+  if (window.appData && window.appData.categories) {
+    categories.value = window.appData.categories
+  }
+  
+  // If we have initial data from server-side rendering, use it
+  if (window.appData && window.appData.category && window.appData.projects) {
+    category.value = window.appData.category
+    projects.value = window.appData.projects
+  } else {
+    // Otherwise, fetch data based on current route
+    loadCategoryData(route.params.slug)
+  }
+}
 
+// Watch for route changes and reload data
+watch(() => route.params.slug, (newSlug, oldSlug) => {
+  if (newSlug && newSlug !== oldSlug) {
+    loadCategoryData(newSlug)
+  }
+}, { immediate: false })
+
+onMounted(() => {
+  loadInitialData()
+})
 </script>
 
 <style scoped>
@@ -93,6 +117,5 @@ onMounted(() => {
 
 .category-page {
   min-height: 100vh;
-  background-color: #f9fafb;
 }
 </style>
