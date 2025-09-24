@@ -7,8 +7,14 @@
 			<h1 class="text-xl font-bold">Fanny Séraudie</h1>
 		</a>
 		<!-- For loop on all the categories -->
-        <div class="space-x-4"> 
-          <router-link to="/portfolio" class="hover:text-gray-700 transition-colors">Portfolio</router-link>
+        <div
+          v-if="category && category.length > 0" 
+          class="space-x-4"> 
+          <router-link 
+            v-for="cat in category" 
+            :key="cat.id" 
+            :to="`/categories/${cat.slug}`" 
+            class="text-gray-800 hover:text-gray-600 transition-colors"></router-link>
         </div>
       </div>
     </nav>
@@ -29,8 +35,35 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
+import { useRoute } from 'vue-router'
 const currentYear = new Date().getFullYear();
 
+const route = useRoute()
+const categories = ref({})
+const loading = ref(true)
+const error = ref(null)
 
+const fetchCategoriesData = async () => {
+  try {
+    loading.value = true
+    const slug = route.params.slug
+
+    const response = await fetch(`/api/categories/${slug}`)
+    if (!response.ok) {
+      throw new Error('Network response was not ok')
+    }
+    const data = await response.json()
+    categories.value = data
+  } catch (err) {
+    error.value = err.message
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchCategoriesData()
+})
 </script>
 

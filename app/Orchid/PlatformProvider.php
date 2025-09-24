@@ -53,6 +53,7 @@ class PlatformProvider extends OrchidServiceProvider
 
             Menu::make('Catégories')
                 ->icon('bs.tags')
+                ->title(__('Contenu'))
                 ->route('platform.categories')
                 ->permission('platform.categories'),
         ];

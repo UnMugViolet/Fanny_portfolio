@@ -21,18 +21,5 @@
         <p class="text-gray-600">Création d'animations pour divers supports numériques.</p>
       </div>
     </div>
-    
-    <div class="mt-12">
-      <router-link 
-        to="/portfolio" 
-        class="bg-gray-600 text-white px-8 py-3 rounded-lg hover:bg-gray-700 transition-colors inline-block"
-      >
-        Voir mon portfolio
-      </router-link>
-    </div>
   </div>
 </template>
-
-<script setup>
-
-</script>
