@@ -90,17 +90,9 @@ build: build-frontend ## Build Docker container after frontend is ready
 	@echo "$(CLR_YELLOW)🐳 Building Docker container...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) build --no-cache
 
-build-and-push: build ## Build and push Docker container to registry
-	@echo "$(CLR_YELLOW)📤 Pushing Docker container to registry...$(CLR_RESET)"
-	@$(DOCKER_COMPOSE) push
-
 build-prod: build-frontend ## Build Docker container for production
 	@echo "$(CLR_YELLOW)🐳 Building Docker container for production...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) -f docker-compose.prod.yml build --no-cache
-
-build-prod-and-push: build-prod ## Build and push production Docker container to registry
-	@echo "$(CLR_YELLOW)📤 Pushing production Docker container to registry...$(CLR_RESET)"
-	@$(DOCKER_COMPOSE) -f docker-compose.prod.yml push
 
 deploy: ## Complete secure Docker deployment
 	@echo "🔄 Preparing for prod environment"
