@@ -103,13 +103,14 @@ RUN npm ci
 
 # Build frontend assets and cleanup
 RUN npm run build \
-    && npm cache clean --force \
     && rm -rf node_modules \
+    && mv /var/www/html/public/build/.vite/manifest.json /var/www/html/public/build/manifest.json \
     && apt-get remove -y nodejs npm \
     && apt-get autoremove -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -f /var/www/html/public/storage \
+    && rm -rf /var/www/html/public/hot \
     && php artisan storage:link \
     && chown -R www-data:www-data /var/www/html \
     && groupadd -g 1000 www \

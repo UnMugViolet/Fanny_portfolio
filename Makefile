@@ -5,7 +5,7 @@ DOCKER_COMPOSE = docker compose
 ARTISAN = php artisan
 NPM = npm
 
-APP_CONTAINER = fanny-portfolio-app
+APP_CONTAINER = fanny-portfolio
 
 # Colors for output
 BOLD = \033[1m
@@ -92,7 +92,7 @@ build: build-frontend ## Build Docker container after frontend is ready
 
 build-prod: build-frontend ## Build Docker container for production
 	@echo "$(CLR_YELLOW)🐳 Building Docker container for production...$(CLR_RESET)"
-	@$(DOCKER_COMPOSE) -f docker-compose.prod.yml build --no-cache
+	@$(DOCKER) build -t $(APP_CONTAINER):latest --target production .
 
 deploy: ## Complete secure Docker deployment
 	@echo "🔄 Preparing for prod environment"
