@@ -37,9 +37,18 @@ echo "Switching to www user for Laravel operations..."
 # Wait for database
 echo "Checking database connection..."
 until gosu www php -r "
-\$pdo = new PDO('mysql:host=${DB_HOST};dbname=${DB_DATABASE}', '${DB_USERNAME}', '${DB_PASSWORD}');
-echo 'Database connection successful\n';
-" 2>/dev/null; do
+try {
+    new PDO(
+        'mysql:host=${DB_HOST};port=${DB_PORT};dbname=${DB_DATABASE}',
+        '${DB_USERNAME}',
+        '${DB_PASSWORD}'
+    );
+    echo 'Database connection successful\n';
+    exit(0);
+} catch (Exception \$e) {
+    echo 'Database not ready: ' . \$e->getMessage() . \"\n\";
+    exit(1);
+}" ; do
     echo "Waiting for database..."
     sleep 2
 done

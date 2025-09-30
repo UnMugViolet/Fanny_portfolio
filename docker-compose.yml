@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
       target: development
     image: fanny-portfolio:dev
-    container_name: fanny-portfolio-app
+    container_name: fanny-portfolio
     restart: unless-stopped
     working_dir: /var/www/html
     command: ["/usr/local/bin/laravel-start.sh"]
