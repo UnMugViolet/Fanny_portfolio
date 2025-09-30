@@ -69,4 +69,4 @@ gosu www php artisan config:cache
 
 # Start both PHP-FPM and Nginx using supervisor
 echo "Starting PHP-FPM and Nginx with supervisor..."
-exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+exec gosu www-data /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

@@ -90,9 +90,15 @@ build: build-frontend ## Build Docker container after frontend is ready
 	@echo "$(CLR_YELLOW)🐳 Building Docker container...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) build --no-cache
 
+
 build-prod: build-frontend ## Build Docker container for production
 	@echo "$(CLR_YELLOW)🐳 Building Docker container for production...$(CLR_RESET)"
 	@$(DOCKER) build -t $(APP_CONTAINER):latest --target production .
+
+push-prod: ## Push Docker image to Docker Hub as latest
+	@echo "$(CLR_YELLOW)🚀 Pushing Docker image to Docker Hub as latest...$(CLR_RESET)"
+	@$(DOCKER) tag $(APP_CONTAINER):latest unmugviolet/$(APP_CONTAINER):latest
+	@$(DOCKER) push unmugviolet/$(APP_CONTAINER):latest
 
 deploy: ## Complete secure Docker deployment
 	@echo "🔄 Preparing for prod environment"
