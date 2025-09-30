@@ -66,7 +66,11 @@ gosu www php artisan cache:clear
 # Cache configuration for better performance
 gosu www php artisan config:cache
 
+# Setting permissions for nginx files
+mkdir -p /var/log/nginx
+chown -R www-data:www-data /var/log/nginx
+
 
 # Start both PHP-FPM and Nginx using supervisor
 echo "Starting PHP-FPM and Nginx with supervisor..."
-exec gosu www-data /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf
+exec /usr/bin/supervisord -c /etc/supervisor/conf.d/supervisord.conf

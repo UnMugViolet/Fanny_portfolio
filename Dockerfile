@@ -133,8 +133,8 @@ COPY docker/nginx/prod.conf /etc/nginx/sites-enabled/default
 COPY docker/scripts/laravel-start.sh /usr/local/bin/laravel-start.sh
 COPY docker/php/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-# Expose port 80 for HTTP
-EXPOSE 80
+# Expose port 8080 for HTTP
+EXPOSE 8080
 
 # Run as root so the startup script can set permissions
 CMD ["/usr/local/bin/laravel-start.sh"]
