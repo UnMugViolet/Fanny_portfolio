@@ -7,27 +7,48 @@
       </p>
     </section>
 
-    <section
-      v-for="(chunk, chunkIndex) in chunkedProjects"
-      :key="chunkIndex"
-      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 sm:gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]"
-    >
+    <section v-for="(chunk, chunkIndex) in chunkedProjects" :key="chunkIndex"
+      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 sm:gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]">
       <div 
         v-for="(project, index) in chunk" 
         :key="project.id"
+        @click="openModal(project)"
         :class="[
           getGridPosition(index),
           'rounded-md bg-center bg-cover transition-transform duration-500 ease-in-out transform hover:scale-105 cursor-pointer'
         ]"
-        :style="{ 
-          backgroundImage: `url(${project.thumbnail || 'https://placehold.co/600x400?text=' + (index + 1 + chunkIndex * 8)})`
-        }"
-      ></div>
+        :style="{ backgroundImage: `url(${project.thumbnail || 'https://placehold.co/600x400?text=' + (index + 1 + chunkIndex * 8)})` }">
+      </div>
     </section>
 
     <div v-if="!projects || projects.length === 0" class="text-center py-12">
       <p class="text-brand-burgundy text-lg">Il n'y a pas encore de projet dans cette catégorie..</p>
     </div>
+
+    <transition name="fade">
+      <div v-if="showModal" class="fixed inset-0 flex items-center justify-center z-10">
+        <div @click="closeModal" class="absolute inset-0 bg-black opacity-75"></div>
+        <div class="bg-white w-10/12 h-5/6 flex flex-col-reverse md:flex-row z-20 rounded-md">
+          <div class="w-full h-1/2 md:h-full md:w-1/2 overflow-y-scroll scrollbar-none">
+            <img 
+              v-for="(image, index) in currentProject.images"
+              :key="index" :src="image"
+              :alt="currentProject.title + '_' + index" class="w-full">
+          </div>
+          <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
+            <button @click="closeModal"
+              class="absolute top-0 right-0 p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800 ">
+              &#10005;
+            </button>
+            <div class="py-14 px-8 overflow-y-scroll">
+              <h2 class="text-black text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
+              <div class="text-black" v-html="currentProject.description"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
   </div>
 </template>
 
@@ -41,6 +62,8 @@ const categories = ref([])
 const projects = ref([])
 const category = ref({})
 const loading = ref(false)
+const showModal = ref(false)
+const currentProject = ref({})
 
 const gridPositions = [
   "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
@@ -58,20 +81,20 @@ const loadCategoryData = async (slug) => {
   if (loading.value) {
     return
   }
-  
+
   try {
     loading.value = true
-    
+
     // Fetch category data from the server
     const response = await fetch(`/api/categories/${slug}`)
     if (!response.ok) {
       throw new Error('Failed to fetch category data')
     }
-    
+
     const data = await response.json()
     category.value = data.category
     projects.value = data.projects
-    
+
   } catch (error) {
     console.error('Error loading category data:', error)
   } finally {
@@ -100,7 +123,7 @@ const loadInitialData = () => {
   if (window.appData && window.appData.categories) {
     categories.value = window.appData.categories
   }
-  
+
   // If we have initial data from server-side rendering, use it
   if (window.appData && window.appData.category && window.appData.projects) {
     category.value = window.appData.category
@@ -118,8 +141,35 @@ watch(() => route.params.slug, (newSlug, oldSlug) => {
   }
 }, { immediate: false })
 
+const openModal = (project) => {
+  currentProject.value = project;
+  showModal.value = true;
+  document.body.classList.add('overflow-hidden');
+};
+
+const closeModal = () => {
+  showModal.value = false;
+  document.body.classList.remove('overflow-hidden');
+};
+
 onMounted(() => {
   loadInitialData()
 })
 </script>
 
+<style scoped>
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity .5s;
+}
+</style>
