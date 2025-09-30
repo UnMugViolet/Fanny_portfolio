@@ -1,5 +1,5 @@
 <template>
-  <nav class="font-sans relative w-full md:py-14 px-4 md:px-16 py-8">
+  <nav class="font-sans relative w-full md:py-12 px-4 md:px-16 py-8">
     <div class="w-full flex justify-between items-center">
         <!-- Logo -->
       <router-link to="/" class="flex items-center w-full">

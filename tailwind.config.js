@@ -14,6 +14,7 @@ export default {
       },
       colors: {
         'brand': {
+          'gray': '#ECE7E3',
           'orange': '#f94e19',
           'burgundy': '#6b2338',
           'blue': '#b7d8fe',

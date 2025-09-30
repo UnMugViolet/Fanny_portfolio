@@ -25,7 +25,7 @@
 		};
 	</script>
 </head>
-<body class="bg-amber-50 font-sans">
+<body class="bg-brand-gray font-sans">
 	<div id="app">
 	</div>
 </body>

@@ -1,6 +1,6 @@
 <template>
   <div class="w-full">
-    <div class="text-center py-3 md:py-10 px-2 md:px-4">
+    <div class="text-center py-3 md:pt-10 px-2 md:px-4">
       <h1 class="text-2xl md:text-4xl font-bold text-brand-burgundy mb-6">
         Bienvenue sur mon portfolio
       </h1>
@@ -9,8 +9,8 @@
         Cet espace est dédié à partager ma passion avec vous. Bienvenue dans mon univers.
       </p>
     </div>
-    <section class="flex md:flex-row flex-col justify-center items-center md:gap-10">
-      <div class="w-full md:w-1/2 text-left space-y-4 px-2 md:px-0">
+    <section class="flex lg:flex-row flex-col justify-center items-center md:gap-10">
+      <div class="w-full lg:w-1/2 text-left space-y-4 px-2 md:px-0">
         <div 
           v-for="category in categories" :key="category.id" 
           class="flex flex-col w-full py md:py-3"> 
@@ -30,12 +30,12 @@
           <hr class="border-t-3 border-brand-black w-full" />
         </div>
       </div>
-      <div class="md:w-1/2 w-full p-4 md:px-25 pt-10">
+      <div class="w-full lg:w-1/2 p-10 lg:p-20 md:px-25 pt-10">
         <img 
           src="/img/cover-image-homepage.webp" 
           alt="Fanny Séraudie Portfolio Couverture"
           aria-label="Image de couverture du portfolio de Fanny Séraudie" 
-          class="w-full h-auto object-cover rounded-lg shadow-lg"
+          class="w-full h-auto object-cover rounded-lg shadow-lg "
         />
 
       </div>
