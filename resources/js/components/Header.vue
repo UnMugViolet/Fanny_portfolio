@@ -2,7 +2,7 @@
   <nav class="font-sans relative w-full md:py-12 px-4 md:px-16 py-8">
     <div class="w-full flex justify-between items-center">
         <!-- Logo -->
-      <router-link to="/" class="flex items-center w-full">
+      <router-link to="/" class="flex items-center">
 		<img src="/img/svg/logo.svg" alt="Logo Fanny Séraudie" class="w-9 h-6 mr-2" />
 		<h1 class="text-xl font-bold font-heading text-brand-burgundy">Fanny Séraudie</h1>
       </router-link>

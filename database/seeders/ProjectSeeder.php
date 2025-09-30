@@ -50,6 +50,54 @@ class ProjectSeeder extends Seeder
                 'categories' => [$jeunesseCategory, $illustrationCategory],
                 'tools' => [$illustrator, $photoshop]
             ],
+                        [
+                'title' => 'Série d\'illu',
+                'description' => 'Collection d\'illustratis et fleurs sauvages, réalisées à l\'aquarelle et finalisées numériquement. Ce projet explore la beauté de la nature à travers un style artistique délicat et coloré.',
+                'status' => 'published',
+                'author_id' => $author->id,
+                'categories' => [$illustrationCategory],
+                'tools' => [$photoshop, $procreate, $aquarelle]
+            ],
+            [
+                'title' => 'Livre pour enfants "Les Aventures de Pixel"',
+                'description' => 'Illustrations ètes pour un livre jeunesse de 32 pages racontant les aventures d\'un petit robot dans un monde numérique. Style coloré et amical, adapté aux enfants de 6-10 ans.',
+                'status' => 'published',
+                'author_id' => $author->id,
+                'categories' => [$jeunesseCategory, $illustrationCategory],
+                'tools' => [$illustrator, $photoshop]
+            ],
+                        [
+                'title' => 'Illustrations botaniques',
+                'description' => 'Collection d\'illustrations détaillées de plantes et fleurs sauvages, réalisées à l\'aquarelle et finalisées numériquement. Ce projet explore la beauté de la nature à travers un style artistique délicat et coloré.',
+                'status' => 'published',
+                'author_id' => $author->id,
+                'categories' => [$illustrationCategory],
+                'tools' => [$photoshop, $procreate, $aquarelle]
+            ],
+            [
+                'title' => 'Lints "Les Aventures de Pixel"',
+                'description' => 'Illustrations complètes pour un livre jeunesse de 32 pages racontant les aventures d\'un petit robot dans un monde numérique. Style coloré et amical, adapté aux enfants de 6-10 ans.',
+                'status' => 'published',
+                'author_id' => $author->id,
+                'categories' => [$jeunesseCategory, $illustrationCategory],
+                'tools' => [$illustrator, $photoshop]
+            ],
+                        [
+                'title' => 'Série d\'illustrationss',
+                'description' => 'Collection d\'illustrations détaillées de plantes et fleurs sauvages, réalisées à l\'aquarelle et finalisées numériquement. Ce projet explore la beauté de la nature à travers un style artistique délicat et coloré.',
+                'status' => 'published',
+                'author_id' => $author->id,
+                'categories' => [$illustrationCategory],
+                'tools' => [$photoshop, $procreate, $aquarelle]
+            ],
+            [
+                'title' => 'Livre illustré pour enfants "Les Aventures de Pipin"',
+                'description' => 'Illustrations complètes pour un livre jeunesse de 32 pages racontant les aventures d\'un petit robot dans un monde numérique. Style coloré et amical, adapté aux enfants de 6-10 ans.',
+                'status' => 'published',
+                'author_id' => $author->id,
+                'categories' => [$jeunesseCategory, $illustrationCategory],
+                'tools' => [$illustrator, $photoshop]
+            ],
             [
                 'title' => 'Court-métrage animé "Le Voyage des Nuages"',
                 'description' => 'Animation 2D de 3 minutes racontant l\'histoire poétique des nuages qui voyagent à travers les saisons. Projet personnel explorant les techniques d\'animation traditionnelle avec une approche moderne.',
