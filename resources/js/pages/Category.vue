@@ -10,7 +10,7 @@
     <section
       v-for="(chunk, chunkIndex) in chunkedProjects"
       :key="chunkIndex"
-      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 gap-4 md:gap-8 md:h-svh mb-9 auto-rows-[40svh]"
+      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 sm:gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]"
     >
       <div 
         v-for="(project, index) in chunk" 
