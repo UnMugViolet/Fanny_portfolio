@@ -11,8 +11,15 @@ mkdir -p /var/www/html/storage/framework/cache
 mkdir -p /var/www/html/storage/framework/sessions
 mkdir -p /var/www/html/storage/framework/views
 mkdir -p /var/www/html/storage/logs
-mkdir -p /var/www/html/storage/app/public
+mkdir -p /var/www/html/storage/app/public/uploads/images
 mkdir -p /var/www/html/bootstrap/cache
+
+# Ensure storage symlink exists and is correct
+if [ ! -L "/var/www/html/public/storage" ] || [ ! -e "/var/www/html/public/storage" ]; then
+    echo "Creating storage symlink..."
+    rm -f /var/www/html/public/storage
+    gosu www php artisan storage:link
+fi
 
 # Set ownership and permissions
 echo "Setting ownership to www-data..."
@@ -21,6 +28,10 @@ chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 echo "Setting permissions..."
 chmod -R 775 /var/www/html/storage
 chmod -R 775 /var/www/html/bootstrap/cache
+
+# Ensure uploads directory has proper permissions
+chmod -R 775 /var/www/html/storage/app/public/uploads
+chown -R www-data:www-data /var/www/html/storage/app/public/uploads
 
 # Ensure Laravel can write to specific directories
 chmod -R 777 /var/www/html/storage/framework/cache

@@ -53,6 +53,16 @@ RUN composer install --optimize-autoloader --no-interaction \
     && npm install \
     && npm audit fix --force || true
 
+# Set up storage permissions and symlink
+RUN mkdir -p storage/app/public/uploads/images \
+    && mkdir -p storage/logs \
+    && mkdir -p storage/framework/{cache,sessions,views} \
+    && rm -f public/storage \
+    && php artisan storage:link \
+    && chown -R www-data:www-data storage bootstrap/cache public/storage \
+    && chmod -R 775 storage bootstrap/cache \
+    && chmod -R 755 public/storage
+
 # Copy and set up startup scripts
 COPY docker/scripts/laravel-start.sh /usr/local/bin/laravel-start.sh
 RUN chmod +x /usr/local/bin/laravel-start.sh
@@ -119,11 +129,18 @@ RUN npm run build \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* \
     && rm -f /var/www/html/public/storage \
-    && rm -rf /var/www/html/public/hot \
+    && rm -rf /var/www/html/public/hot
+
+# Set up storage permissions and symlink for production
+RUN mkdir -p storage/app/public/uploads/images \
+    && mkdir -p storage/logs \
+    && mkdir -p storage/framework/{cache,sessions,views} \
     && php artisan storage:link \
-    && chown -R www-data:www-data /var/www/html \
     && groupadd -g 1000 www \
-    && useradd -u 1000 -ms /bin/bash -g www www
+    && useradd -u 1000 -ms /bin/bash -g www www \
+    && chown -R www-data:www-data /var/www/html \
+    && chmod -R 775 storage bootstrap/cache \
+    && chmod -R 755 public/storage
 
 # Copy Nginx configuration
 COPY docker/nginx/prod.conf /etc/nginx/sites-available/default

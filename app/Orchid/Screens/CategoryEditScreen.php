@@ -83,7 +83,8 @@ class CategoryEditScreen extends Screen
                     Input::make('category.order')
                         ->title('Ordre')
                         ->type('number')
-                        ->placeholder('0')
+                        ->placeholder(Category::max('order') + 1)
+                        ->min(1)
                         ->help('Ordre d\'affichage (plus petit = affiché en premier)'),
 
                     Input::make('category.name')
@@ -144,11 +145,6 @@ class CategoryEditScreen extends Screen
         // Generate slug if not provided
         if (empty($data['slug'])) {
             $data['slug'] = Str::slug($data['name']);
-        }
-
-        // Default order to 0 if not provided
-        if (empty($data['order'])) {
-            $data['order'] = 0;
         }
 
         // Ensure no_index is set to 0 if not checked

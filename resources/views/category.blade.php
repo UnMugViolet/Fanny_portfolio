@@ -18,8 +18,6 @@
 
 	<!-- Styles and Scripts -->
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
-
-	@section('title', 'Fanny Séraudie | Categorie ' . ($category->meta_title ?? $category->name) ? : 'Catégorie')
 	
 	<!-- Pass data to Vue -->
 	<script>

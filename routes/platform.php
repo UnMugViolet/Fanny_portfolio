@@ -2,15 +2,6 @@
 
 declare(strict_types=1);
 
-use App\Orchid\Screens\Examples\ExampleActionsScreen;
-use App\Orchid\Screens\Examples\ExampleCardsScreen;
-use App\Orchid\Screens\Examples\ExampleChartsScreen;
-use App\Orchid\Screens\Examples\ExampleFieldsAdvancedScreen;
-use App\Orchid\Screens\Examples\ExampleFieldsScreen;
-use App\Orchid\Screens\Examples\ExampleGridScreen;
-use App\Orchid\Screens\Examples\ExampleLayoutsScreen;
-use App\Orchid\Screens\Examples\ExampleScreen;
-use App\Orchid\Screens\Examples\ExampleTextEditorsScreen;
 use App\Orchid\Screens\PlatformScreen;
 use App\Orchid\Screens\Role\RoleEditScreen;
 use App\Orchid\Screens\Role\RoleListScreen;
@@ -20,6 +11,7 @@ use App\Orchid\Screens\User\UserProfileScreen;
 use App\Orchid\Screens\CategoryListScreen;
 use App\Orchid\Screens\CategoryEditScreen;
 use App\Orchid\Screens\ProjectEditScreen;
+use App\Orchid\Screens\ProjectListScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
 
@@ -108,17 +100,25 @@ Route::screen('categories/create', CategoryEditScreen::class)
         ->parent('platform.categories')
         ->push(__('Create'), route('platform.category.create')));
 
+
+// Platform > Projects
+Route::screen('projects', ProjectListScreen::class)
+    ->name('platform.projects')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Projects'), route('platform.projects')));
+
 // Platform > Projects > Edit
 Route::screen('projects/{project}/edit', ProjectEditScreen::class)
     ->name('platform.project.edit')
     ->breadcrumbs(fn (Trail $trail, $project) => $trail
-        ->parent('platform.index')
+        ->parent('platform.categories')
         ->push($project->name ?? __('Edit Project'), route('platform.project.edit', $project)));
 
 // Platform > Projects > Create
 Route::screen('projects/create', ProjectEditScreen::class)
     ->name('platform.project.create')
     ->breadcrumbs(fn (Trail $trail) => $trail
-        ->parent('platform.index')
+        ->parent('platform.categories')
         ->push(__('Create Project'), route('platform.project.create')));
 

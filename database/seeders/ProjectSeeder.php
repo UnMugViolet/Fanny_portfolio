@@ -32,6 +32,8 @@ class ProjectSeeder extends Seeder
         $afterEffects = Tool::where('name', 'Adobe After Effects')->first();
         $aquarelle = Tool::where('name', 'Aquarelle')->first();
 
+        // Order
+        $order = 1;
 
         $projects = [
             [
@@ -40,6 +42,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$illustrationCategory],
+                'order' => $order++,
                 'tools' => [$photoshop, $procreate, $aquarelle]
             ],
             [
@@ -48,6 +51,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$jeunesseCategory, $illustrationCategory],
+                'order' => $order++,
                 'tools' => [$illustrator, $photoshop]
             ],
                         [
@@ -56,6 +60,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$illustrationCategory],
+                'order' => $order++,
                 'tools' => [$photoshop, $procreate, $aquarelle]
             ],
             [
@@ -64,6 +69,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$jeunesseCategory, $illustrationCategory],
+                'order' => $order++,
                 'tools' => [$illustrator, $photoshop]
             ],
                         [
@@ -72,6 +78,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$illustrationCategory],
+                'order' => $order++,
                 'tools' => [$photoshop, $procreate, $aquarelle]
             ],
             [
@@ -80,6 +87,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$jeunesseCategory, $illustrationCategory],
+                'order' => $order++,
                 'tools' => [$illustrator, $photoshop]
             ],
                         [
@@ -88,6 +96,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$illustrationCategory],
+                'order' => $order++,
                 'tools' => [$photoshop, $procreate, $aquarelle]
             ],
             [
@@ -96,6 +105,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$jeunesseCategory, $illustrationCategory],
+                'order' => $order++,
                 'tools' => [$illustrator, $photoshop]
             ],
             [
@@ -104,6 +114,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$animationCategory],
+                'order' => $order++,
                 'tools' => [$afterEffects, $illustrator, $photoshop]
             ],
             [
@@ -112,6 +123,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'published',
                 'author_id' => $author->id,
                 'categories' => [$illustrationCategory],
+                'order' => $order++,
                 'tools' => [$illustrator]
             ],
             [
@@ -120,6 +132,7 @@ class ProjectSeeder extends Seeder
                 'status' => 'draft',
                 'author_id' => $author->id,
                 'categories' => [$jeunesseCategory, $illustrationCategory],
+                'order' => $order++,
                 'tools' => [$illustrator, $procreate]
             ],
         ];

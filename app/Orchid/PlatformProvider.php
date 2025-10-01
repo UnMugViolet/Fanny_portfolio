@@ -56,6 +56,11 @@ class PlatformProvider extends OrchidServiceProvider
                 ->title(__('Contenu'))
                 ->route('platform.categories')
                 ->permission('platform.categories'),
+
+            Menu::make('Projets')
+                ->icon('bs.bookmarks')
+                ->route('platform.projects')
+                ->permission('platform.projects'),
         ];
     }
 

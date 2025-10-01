@@ -36,11 +36,11 @@ clean: ## Clean the cache and compiled files
 	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) route:clear
 	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) view:clear
 	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) cache:clear
-	@rm -rf ./public/storage/uploads/*
 
 fclean: ## Run database migrations
 	@echo "$(CLR_YELLOW) Running database migrations...$(CLR_RESET)"
-	@$(ARTISAN) migrate:fresh --seed
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) migrate:fresh --seed
+	@sudo rm -rf ./public/storage/uploads/*
 	@$(MAKE) clean
 
 user: ## Create a new admin user
