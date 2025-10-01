@@ -14,8 +14,8 @@
         <div 
           v-for="category in categories" :key="category.id" 
           class="flex flex-col w-full py md:py-3"> 
-          <router-link 
-            :to="{ name: 'Category', params: { slug: category.slug } }"
+          <a
+            :href="`/${category.slug}`"
             class="block w-full"
             @click="handleCategoryClick"
             @mouseenter="handleMouseEnter(category.id)"
@@ -26,7 +26,7 @@
               :style="{ color: getCategoryColor(category.id) }">
               {{ category.name }}
             </h2>
-          </router-link>
+          </a>
           <hr class="border-t-3 border-brand-black w-full" />
         </div>
       </div>
@@ -45,9 +45,7 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
 
-const router = useRouter()
 const categories = ref([])
 const colors = [ 
   '#b7d8fe',
@@ -63,13 +61,6 @@ const colors = [
 const hoveredCategories = ref(new Set())
 const categoryColors = ref(new Map())
 
-// Get data passed from Laravel blade template
-const loadCategories = () => {
-  if (window.appData && window.appData.categories) {
-    categories.value = window.appData.categories
-    console.log('Categories loaded:', categories.value)
-  }
-}
 
 // Get a random color for a category
 const getRandomColor = () => {
@@ -96,19 +87,9 @@ const handleMouseLeave = (categoryId) => {
   hoveredCategories.value.delete(categoryId)
 }
 
-// Handle category click with debouncing to prevent multiple rapid clicks
-let clickTimeout = null
-const handleCategoryClick = (event) => {
-  if (clickTimeout) {
-    clearTimeout(clickTimeout)
-  }
-  
-  clickTimeout = setTimeout(() => {
-    // Let router-link handle the navigation naturally
-  }, 100)
-}
-
 onMounted(() => {
-  loadCategories()
+  // Fetch categories from global app data
+  categories.value = window.appData.categories || []
 })
+
 </script>

@@ -73,6 +73,10 @@ logs: ## View the logs of all the containers
 	@echo "$(CLR_YELLOW) Viewing production environment logs...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) logs -f
 
+list: ## List all the routes from the application
+	@echo "$(CLR_YELLOW) Listing all application routes...$(CLR_RESET)"
+	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) route:list
+
 re: ## Restart the docker containers
 	@echo "$(CLR_YELLOW) Restarting production environment...$(CLR_RESET)"
 	@$(MAKE) down

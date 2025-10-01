@@ -35,16 +35,18 @@
               :key="index" :src="image"
               :alt="currentProject.title + '_' + index" class="w-full">
           </div>
-          <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
-            <button @click="closeModal"
-              class="absolute top-0 right-0 p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800 ">
+            <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
+            <div class="sticky top-0 right-0 z-30 flex justify-end bg-white">
+              <button @click="closeModal"
+              class="absolute p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
               &#10005;
-            </button>
-            <div class="py-14 px-8 overflow-y-scroll">
+              </button>
+            </div>
+            <div class="pt-10 md:py-14 px-8 overflow-y-scroll">
               <h2 class="text-black text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
               <div class="text-black" v-html="currentProject.description"></div>
             </div>
-          </div>
+            </div>
         </div>
       </div>
     </transition>
@@ -55,15 +57,12 @@
 
 <script setup>
 import { ref, onMounted, watch, computed } from 'vue'
-import { useRoute } from 'vue-router'
 
-const route = useRoute()
-const categories = ref([])
-const projects = ref([])
-const category = ref({})
-const loading = ref(false)
+const category = ref(window.appData.category || [])
+const projects = ref(window.appData.projects || [])
 const showModal = ref(false)
 const currentProject = ref({})
+
 
 const gridPositions = [
   "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
@@ -75,32 +74,6 @@ const gridPositions = [
   "md:col-start-1 md:col-end-3 md:row-start-10 md:row-end-13",
   "md:col-start-3 md:col-end-5 md:row-start-9 md:row-end-13",
 ]
-
-const loadCategoryData = async (slug) => {
-  // Prevent multiple simultaneous requests
-  if (loading.value) {
-    return
-  }
-
-  try {
-    loading.value = true
-
-    // Fetch category data from the server
-    const response = await fetch(`/api/categories/${slug}`)
-    if (!response.ok) {
-      throw new Error('Failed to fetch category data')
-    }
-
-    const data = await response.json()
-    category.value = data.category
-    projects.value = data.projects
-
-  } catch (error) {
-    console.error('Error loading category data:', error)
-  } finally {
-    loading.value = false
-  }
-}
 
 // Split projects into chunks of 8
 const chunkedProjects = computed(() => {
@@ -118,29 +91,6 @@ const getGridPosition = (index) => {
   return gridPositions[index % gridPositions.length]
 }
 
-const loadInitialData = () => {
-  // Load categories from window.appData (for navigation)
-  if (window.appData && window.appData.categories) {
-    categories.value = window.appData.categories
-  }
-
-  // If we have initial data from server-side rendering, use it
-  if (window.appData && window.appData.category && window.appData.projects) {
-    category.value = window.appData.category
-    projects.value = window.appData.projects
-  } else {
-    // Otherwise, fetch data based on current route
-    loadCategoryData(route.params.slug)
-  }
-}
-
-// Watch for route changes and reload data
-watch(() => route.params.slug, (newSlug, oldSlug) => {
-  if (newSlug && newSlug !== oldSlug) {
-    loadCategoryData(newSlug)
-  }
-}, { immediate: false })
-
 const openModal = (project) => {
   currentProject.value = project;
   showModal.value = true;
@@ -152,9 +102,6 @@ const closeModal = () => {
   document.body.classList.remove('overflow-hidden');
 };
 
-onMounted(() => {
-  loadInitialData()
-})
 </script>
 
 <style scoped>

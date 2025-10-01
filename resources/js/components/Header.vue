@@ -2,10 +2,10 @@
   <nav class="font-sans relative w-full md:py-12 px-4 md:px-16 py-8">
     <div class="w-full flex justify-between items-center">
         <!-- Logo -->
-      <router-link to="/" class="flex items-center">
+      <a href="/" class="flex items-center">
 		<img src="/img/svg/logo.svg" alt="Logo Fanny Séraudie" class="w-9 h-6 mr-2" />
 		<h1 class="text-xl font-bold font-heading text-brand-burgundy">Fanny Séraudie</h1>
-      </router-link>
+      </a>
 
       <!-- Mobile burger menu button -->
       <button 
@@ -33,13 +33,16 @@
       <div
         v-if="categories && categories.length > 0" 
         class="hidden md:flex space-x-6"> 
-        <router-link 
+        <a
           v-for="category in categories" 
           :key="category.id" 
-          :to="`/${category.slug}`" 
-          class="text-brand-black hover:text-gray-600 transition-colors font-medium">
+          :href="`/${category.slug}`"
+          :class="[
+            ' text-brand-black hover:text-gray-600 transition-colors',
+            currentCategoryName === category.name ? 'font-semibold underline' : ''
+          ]">
           {{ category.name }}
-        </router-link>
+        </a>
       </div>
     </div>
 
@@ -65,24 +68,19 @@
       <!-- Menu content -->
       <div class="flex flex-col justify-center items-center h-full px-8 bg-brand-blue">
         <div class="space-y-8 text-center">
-          <router-link 
-            to="/" 
-            @click="closeMobileMenu"
-            class="block text-4xl font-bold font-heading text-brand-black hover:text-gray-600 transition-colors"
-          >
-            Accueil
-          </router-link>
-          
           <div v-if="categories && categories.length > 0" class="space-y-6">
-            <router-link 
+            <a
               v-for="category in categories" 
               :key="category.id" 
-              :to="`/${category.slug}`" 
+              :href="`/${category.slug}`" 
               @click="closeMobileMenu"
-              class="block text-3xl font-medium text-brand-black hover:text-gray-900 transition-colors"
+              :class="[
+                'block text-3xl font-medium text-brand-black hover:text-gray-900 transition-colors',
+                currentCategoryName === category.name ? 'font-semibold underline' : ''
+              ]"
             >
               {{ category.name }}
-            </router-link>
+            </a>
           </div>
         </div>
       </div>
@@ -94,6 +92,7 @@
 import { ref, onMounted, watch } from 'vue'
 
 const categories = ref([])
+const currentCategoryName = ref('')
 const isMobileMenuOpen = ref(false)
 
 // Toggle mobile menu
@@ -119,6 +118,10 @@ onMounted(() => {
   // Get data passed from Laravel blade template
   if (window.appData && window.appData.categories) {
     categories.value = window.appData.categories
+    if (window.appData.category) {
+      currentCategoryName.value = window.appData.category.name || ''
+    }
   }
+
 })
 </script>
