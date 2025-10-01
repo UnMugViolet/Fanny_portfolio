@@ -19,6 +19,7 @@ use App\Orchid\Screens\User\UserListScreen;
 use App\Orchid\Screens\User\UserProfileScreen;
 use App\Orchid\Screens\CategoryListScreen;
 use App\Orchid\Screens\CategoryEditScreen;
+use App\Orchid\Screens\ProjectEditScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
 
@@ -106,3 +107,18 @@ Route::screen('categories/create', CategoryEditScreen::class)
     ->breadcrumbs(fn (Trail $trail) => $trail
         ->parent('platform.categories')
         ->push(__('Create'), route('platform.category.create')));
+
+// Platform > Projects > Edit
+Route::screen('projects/{project}/edit', ProjectEditScreen::class)
+    ->name('platform.project.edit')
+    ->breadcrumbs(fn (Trail $trail, $project) => $trail
+        ->parent('platform.index')
+        ->push($project->name ?? __('Edit Project'), route('platform.project.edit', $project)));
+
+// Platform > Projects > Create
+Route::screen('projects/create', ProjectEditScreen::class)
+    ->name('platform.project.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Create Project'), route('platform.project.create')));
+

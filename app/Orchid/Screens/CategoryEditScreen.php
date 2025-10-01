@@ -12,6 +12,7 @@ use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rules\Can;
 
 class CategoryEditScreen extends Screen
 {
@@ -78,35 +79,54 @@ class CategoryEditScreen extends Screen
     public function layout(): iterable
     {
         return [
-            Layout::rows([
-                Input::make('category.order')
-                    ->title('Ordre')
-                    ->type('number')
-                    ->placeholder('0')
-                    ->help('Ordre d\'affichage (plus petit = affiché en premier)'),
+            Layout::tabs([
+                'Contenu' => Layout::rows([
+                    Input::make('category.order')
+                        ->title('Ordre')
+                        ->type('number')
+                        ->placeholder('0')
+                        ->help('Ordre d\'affichage (plus petit = affiché en premier)'),
 
-                Input::make('category.name')
-                    ->title('Nom')
-                    ->placeholder('Nom de la catégorie')
-                    ->required()
-                    ->help('Le nom de la catégorie'),
+                    Input::make('category.name')
+                        ->title('Nom')
+                        ->placeholder('Nom de la catégorie')
+                        ->required()
+                        ->help('Le nom de la catégorie'),
 
-                Input::make('category.slug')
-                    ->title('Slug')
-                    ->placeholder('slug-de-la-categorie')
-                    ->help('URL slug pour la catégorie (généré automatiquement si laissé vide)'),
+                    Input::make('category.slug')
+                        ->title('Slug')
+                        ->placeholder('slug-de-la-categorie')
+                        ->help('URL slug pour la catégorie (généré automatiquement si laissé vide)'),
 
-                CheckBox::make('category.is_main')
-                    ->title('Catégorie principale')
-                    ->placeholder('Marquer comme catégorie principale')
-                    ->help('Les catégories principales sont mises en évidence'),
+                    CheckBox::make('category.is_main')
+                        ->title('Catégorie principale')
+                        ->placeholder('Marquer comme catégorie principale')
+                        ->help('Les catégories principales sont mises en évidence'),
 
-                TextArea::make('category.description')
-                    ->title('Description')
-                    ->placeholder('Description de la catégorie')
-                    ->rows(3)
-                    ->help('Description optionnelle de la catégorie'),
-            ])
+                    TextArea::make('category.description')
+                        ->title('Description')
+                        ->placeholder('Description de la catégorie')
+                        ->rows(3)
+                        ->help('Description optionnelle de la catégorie'),
+                ]),
+                'SEO' => Layout::rows([
+                    Input::make('category.meta_title')
+                        ->title('Meta Title')
+                        ->placeholder('Titre SEO de la catégorie')
+                        ->help('Titre SEO pour les moteurs de recherche (optionnel)'),
+
+                    TextArea::make('category.meta_description')
+                        ->title('Meta Description')
+                        ->placeholder('Description SEO de la catégorie')
+                        ->rows(3)
+                        ->help('Description SEO pour les moteurs de recherche (optionnel)'),
+
+                    CheckBox::make('category.no_index')
+                        ->title('No Index')
+                        ->placeholder('Ne pas indexer cette catégorie')
+                        ->help('Empêche les moteurs de recherche d\'indexer cette catégorie'),
+                ]),
+            ]),
         ];
     }
 
@@ -120,6 +140,9 @@ class CategoryEditScreen extends Screen
             'category.name' => 'required|string|max:255',
             'category.slug' => 'nullable|string|max:255|unique:categories,slug,' . $category->id,
             'category.description' => 'nullable|string',
+            'category.meta_title' => 'nullable|string|max:255',
+            'category.meta_description' => 'nullable|string|max:1000',
+            'category.no_index' => 'sometimes|boolean',
         ]);
 
         $data = $request->get('category');
@@ -129,17 +152,19 @@ class CategoryEditScreen extends Screen
             $data['slug'] = Str::slug($data['name']);
         }
 
-        // Handle checkbox value - more flexible approach
-        $data['is_main'] = !empty($data['is_main']);
-        
-        // Set default order if not provided
+        // Default order to 0 if not provided
         if (empty($data['order'])) {
             $data['order'] = 0;
+        }
+        if (!isset($data['no_index'])) {
+            $data['no_index'] = 0;
+        } else {
+            $data['no_index'] = 1;
         }
 
         $category->fill($data)->save();
 
-        Alert::info('Catégorie enregistrée avec succès.');
+        Alert::success('Catégorie enregistrée avec succès !');
 
         return redirect()->route('platform.categories');
     }

@@ -19,6 +19,9 @@ class Category extends Model
         'slug',
         'description',
         'order',
+        'meta_title',
+        'meta_description',
+        'no_index',
     ];
 
     /**
@@ -40,6 +43,7 @@ class Category extends Model
         'slug',
         'description',
         'order',
+        'no_index',
     ];
 
     /**
@@ -53,6 +57,7 @@ class Category extends Model
         'order',
         'created_at',
         'updated_at',
+        'no_index',
     ];
 
     /* ========== Relations ========== */
