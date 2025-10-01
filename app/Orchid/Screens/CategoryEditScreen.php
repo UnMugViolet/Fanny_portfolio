@@ -9,10 +9,9 @@ use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\TextArea;
 use Orchid\Screen\Fields\CheckBox;
 use Orchid\Screen\Screen;
-use Orchid\Support\Facades\Alert;
 use Orchid\Support\Facades\Layout;
 use Illuminate\Support\Str;
-use Illuminate\Validation\Rules\Can;
+use Orchid\Support\Facades\Toast;
 
 class CategoryEditScreen extends Screen
 {
@@ -98,11 +97,6 @@ class CategoryEditScreen extends Screen
                         ->placeholder('slug-de-la-categorie')
                         ->help('URL slug pour la catégorie (généré automatiquement si laissé vide)'),
 
-                    CheckBox::make('category.is_main')
-                        ->title('Catégorie principale')
-                        ->placeholder('Marquer comme catégorie principale')
-                        ->help('Les catégories principales sont mises en évidence'),
-
                     TextArea::make('category.description')
                         ->title('Description')
                         ->placeholder('Description de la catégorie')
@@ -156,6 +150,8 @@ class CategoryEditScreen extends Screen
         if (empty($data['order'])) {
             $data['order'] = 0;
         }
+
+        // Ensure no_index is set to 0 if not checked
         if (!isset($data['no_index'])) {
             $data['no_index'] = 0;
         } else {
@@ -164,7 +160,7 @@ class CategoryEditScreen extends Screen
 
         $category->fill($data)->save();
 
-        Alert::success('Catégorie enregistrée avec succès !');
+        Toast::success('Catégorie enregistrée avec succès !');
 
         return redirect()->route('platform.categories');
     }
@@ -176,7 +172,7 @@ class CategoryEditScreen extends Screen
     {
         $category->delete();
 
-        Alert::info('Catégorie supprimée avec succès.');
+        Toast::info('Catégorie supprimée avec succès.');
 
         return redirect()->route('platform.categories');
     }

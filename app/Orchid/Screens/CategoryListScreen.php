@@ -65,7 +65,7 @@ class CategoryListScreen extends Screen
      */
     public function description(): ?string
     {
-        return 'Gestion des catégories';
+        return 'Gestion des catégories de projets';
     }
 
     /**
