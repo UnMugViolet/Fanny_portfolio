@@ -213,7 +213,7 @@ class ProjectEditScreen extends Screen
 
         /* 
         * Update  relationships - detach all and reattach the selected ones
-        * The deletion of the physical files is handled by an Observer on the Attachment model
+        * The deletion of the physical files is handled by the ProjectObserver routine
         */
         if ($project->exists) {
             $project->attachments()->detach();
