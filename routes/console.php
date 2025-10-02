@@ -10,4 +10,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Custom command to clear unattached files
-Schedule::command(AttachmentClear::class)->daily('15:10');
+Schedule::command(AttachmentClear::class)->weekly('2:00');
