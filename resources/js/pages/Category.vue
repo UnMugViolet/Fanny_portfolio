@@ -46,6 +46,23 @@
             </div>
             <div class="pt-10 md:py-14 px-8 overflow-y-scroll">
               <h2 class="text-black text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
+              <div
+                v-if="currentProject.tools && currentProject.tools.length"
+                class="mb-4 flex flex-wrap gap-2">
+                <span
+                  v-for="tool in currentProject.tools"
+                  :key="tool.id"
+                  :style="{
+                    border: `2px solid ${tool.color}`,
+                    backgroundColor: `${tool.color}22`,
+                    color: tool.color,
+                  }"
+                  class="text-sm font-medium px-3 py-1 rounded-full mr-2 mb-2 transition-colors duration-200 hover:bg-opacity-30"
+                >
+                  {{ tool.name }}
+                </span>
+
+              </div>
               <div class="text-black" v-html="currentProject.description"></div>
             </div>
             </div>
@@ -65,6 +82,7 @@ const projects = ref(window.appData.projects || [])
 const showModal = ref(false)
 const currentProject = ref({})
 
+console.log('Loaded projects:', projects.value);
 
 const gridPositions = [
   "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
