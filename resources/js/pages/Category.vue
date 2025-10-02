@@ -17,7 +17,7 @@
           getGridPosition(index),
           'rounded-md bg-center bg-cover transition-transform duration-500 ease-in-out transform hover:scale-105 cursor-pointer'
         ]"
-        :style="{ backgroundImage: `url(${project.thumbnail || 'https://placehold.co/600x400?text=' + (index + 1 + chunkIndex * 8)})` }">
+        :style="{ backgroundImage: `url(${project.thumbnail?.[0]?.url || 'https://placehold.co/600x400?text=' + (index + 1 + chunkIndex * 8)})` }">
       </div>
     </section>
 
@@ -32,8 +32,10 @@
           <div class="w-full h-1/2 md:h-full md:w-1/2 overflow-y-scroll scrollbar-none">
             <img 
               v-for="(image, index) in currentProject.images"
-              :key="index" :src="image"
-              :alt="currentProject.title + '_' + index" class="w-full">
+              :key="index" 
+              :src="image.url"
+              :alt="image.alt || currentProject.title + '_' + index" 
+              class="w-full">
           </div>
             <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
             <div class="sticky top-0 right-0 z-30 flex justify-end bg-white">
@@ -56,7 +58,7 @@
 
 
 <script setup>
-import { ref, onMounted, watch, computed } from 'vue'
+import { ref, computed } from 'vue'
 
 const category = ref(window.appData.category || [])
 const projects = ref(window.appData.projects || [])

@@ -24,7 +24,7 @@
 		window.appData = {
 			categories: @json($categories ?? []),
 			category: @json($category ?? null),
-			projects: @json($projects ?? [])
+			projects: @json($projects ?? []),
 		};
 	</script>
 </head>

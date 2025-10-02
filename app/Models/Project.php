@@ -96,7 +96,31 @@ class Project extends Model
     }
 
     /**
-     * Get only the images linked to the project (filtered by group)
+     * Get images relationship for eager loading
+     */
+    public function images(): MorphToMany
+    {
+        return $this->morphToMany(
+            Attachment::class,
+            'attachmentable',
+            'attachmentable'
+        )->where('group', 'images');
+    }
+
+    /**
+     * Get thumbnail relationship for eager loading
+     */
+    public function thumbnail(): MorphToMany
+    {
+        return $this->morphToMany(
+            Attachment::class,
+            'attachmentable',
+            'attachmentable'
+        )->where('group', 'thumbnail');
+    }
+
+    /**
+     * Get only the images linked to the project (accessor)
      */
     public function getImagesAttribute()
     {
@@ -104,7 +128,7 @@ class Project extends Model
     }
 
     /**
-     * Get only the thumbnail attachments (filtered by group)
+     * Get only the thumbnail attachments (accessor)
      */
     public function getThumbnailAttribute()
     {

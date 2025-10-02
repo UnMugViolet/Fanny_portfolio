@@ -28,13 +28,13 @@ class AttachmentClear extends Command
     public function handle()
     {
         $unrelatedAttachments = Attachment::doesntHave('relationships')
-            ->whereDate('created_at', '<', now()->subDay(2))
+            // ->whereDate('created_at', '<', now()->subDay(2))
             ->get();
 
         $this->info('Starting cleanup of unattached files. Found ' . $unrelatedAttachments->count() . ' files to delete.');
         Log::info('Starting cleanup of unattached files. Found ' . $unrelatedAttachments->count() . ' files to delete.');
         foreach ($unrelatedAttachments as $attachment) {
-            $this->line('Deleting image at: ' . $attachment->path . $attachment->original_name . '.' . $attachment->extension);
+            $this->line('Deleting image at: ' . $attachment->path . $attachment->original_name);
         }
 
         $unrelatedAttachments->each->delete();

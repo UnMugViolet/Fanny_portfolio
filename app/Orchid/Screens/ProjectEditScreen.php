@@ -194,6 +194,7 @@ class ProjectEditScreen extends Screen
         if (!isset($data['order']) || $data['order'] === null) {
             $data['order'] = Project::max('order') + 1;
         }
+
         $project->fill($data)->save();
 
 
@@ -226,6 +227,7 @@ class ProjectEditScreen extends Screen
             $project->attachments()->syncWithoutDetaching($newThumbnailId);
         }
         if (!empty($newImageIds)) {
+
             $project->attachments()->syncWithoutDetaching($newImageIds);
         }
 

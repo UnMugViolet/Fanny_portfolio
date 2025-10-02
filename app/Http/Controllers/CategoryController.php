@@ -32,10 +32,11 @@ class CategoryController extends Controller
         $projects = $categoryModel->projects()
             ->with([
                 'tools',
-                // 'attachments', TODO - For future use add the pictures of the projects
                 'categories:id,name,slug',
+                'thumbnail',
+                'images',
             ])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('order', 'asc')
             ->get();
         
         return view('category', [
