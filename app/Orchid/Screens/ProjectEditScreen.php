@@ -184,9 +184,7 @@ class ProjectEditScreen extends Screen
             'project.categories' => 'nullable|array',
             'project.categories.*' => 'exists:categories,id',
             'project.thumbnail' => 'nullable',
-            'project.thumbnail.*' => 'exists:attachments,id',
-            'project.images' => 'nullable|array|max:10',
-            'project.images.*' => 'exists:attachments,id',
+            'project.images' => 'nullable',
         ]);
 
         $data = $request->get('project');
