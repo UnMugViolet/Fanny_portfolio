@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Orchid\Attachment\Models\Attachment;
 use Orchid\Support\Facades\Alert;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Attach;
@@ -159,6 +160,7 @@ class ProjectEditScreen extends Screen
                         ->path('uploads/images')
                         ->maxSize(2048)
                         ->maxCount(10)
+                        ->multiple()
                         ->acceptedFiles('image/*')
                         ->group('images')
                         ->targetRelativeUrl()
@@ -191,69 +193,36 @@ class ProjectEditScreen extends Screen
 
         $project->fill($data)->save();
 
-        // Sync categories
         if (isset($data['categories'])) {
             $project->categories()->sync($data['categories']);
         } else {
             $project->categories()->detach();
         }
 
-        // Handle thumbnail (MorphToMany relationship)
-        $currentThumbnailIds = $project->exists ? $project->thumbnail->pluck('id')->toArray() : [];
-        $newThumbnailIds = [];
-        
-        if (!empty($data['thumbnail'])) {
-            $newThumbnailIds = is_array($data['thumbnail']) ? $data['thumbnail'] : [$data['thumbnail']];
-        }
-        
-        // Find thumbnails to remove (old ones not in new list)
-        $thumbnailsToRemove = array_diff($currentThumbnailIds, $newThumbnailIds);
-        
-        // Delete removed thumbnail files
-        if (!empty($thumbnailsToRemove)) {
-            foreach ($thumbnailsToRemove as $attachmentId) {
-                $attachment = \Orchid\Attachment\Models\Attachment::find($attachmentId);
-                if ($attachment) {
-                    $attachment->delete();
-                }
-            }
-        }
-        
-        // Update thumbnail relationships
-        if ($project->exists) {
-            $project->thumbnail()->detach();
-        }
-        if (!empty($newThumbnailIds)) {
-            foreach ($newThumbnailIds as $attachmentId) {
-                $project->thumbnail()->attach($attachmentId);
-            }
-        }
+        // Handle thumbnail and images (MorphToMany relationship)
+        $newThumbnailId = is_array($data['thumbnail']) ? $data['thumbnail'] : [$data['thumbnail']];
+        $newImageIds = isset($data['images']) ? (is_array($data['images']) ? $data['images'] : [$data['images']]) : [];
 
-        // Handle images (MorphToMany relationship)
-        $currentImageIds = $project->exists ? $project->images->pluck('id')->toArray() : [];
-        $newImageIds = isset($data['images']) && !empty($data['images']) ? $data['images'] : [];
-        
-        // Find images to remove (old ones not in new list)
-        $imagesToRemove = array_diff($currentImageIds, $newImageIds);
-        
-        // Delete removed image files
-        if (!empty($imagesToRemove)) {
-            foreach ($imagesToRemove as $attachmentId) {
-                $attachment = \Orchid\Attachment\Models\Attachment::find($attachmentId);
-                if ($attachment) {
-                    $attachment->delete();
-                }
-            }
-        }
-        
-        // Update image relationships
+        // Filter out empty values and non-integer IDs
+        $newThumbnailId = array_filter($newThumbnailId, function ($id) {
+            return !empty($id) && is_numeric($id);
+        });
+        $newImageIds = array_filter($newImageIds, function ($id) {
+            return !empty($id) && is_numeric($id);
+        });
+
+        /* 
+        * Update  relationships - detach all and reattach the selected ones
+        * The deletion of the physical files is handled by an Observer on the Attachment model
+        */
         if ($project->exists) {
-            $project->images()->detach();
+            $project->attachments()->detach();
+        }
+        if (!empty($newThumbnailId)) {
+            $project->attachments()->syncWithoutDetaching($newThumbnailId);
         }
         if (!empty($newImageIds)) {
-            foreach ($newImageIds as $attachmentId) {
-                $project->images()->attach($attachmentId);
-            }
+            $project->attachments()->syncWithoutDetaching($newImageIds);
         }
 
         Toast::success('Le projet a été enregistré avec succès.');
@@ -267,28 +236,19 @@ class ProjectEditScreen extends Screen
     public function remove(Project $project)
     {
         // Get all attachments before detaching to delete physical files
-        $thumbnailAttachments = $project->thumbnail;
-        $imageAttachments = $project->images;
+        $imageAttachments = $project->attachments();
 
         // Detach relationships
         $project->categories()->detach();
         $project->tools()->detach();
-        $project->thumbnail()->detach();
-        $project->images()->detach();
-
-        // Delete physical files and attachment records
-        foreach ($thumbnailAttachments as $attachment) {
-            $attachment->delete(); // This will delete both the file and the database record
-        }
 
         foreach ($imageAttachments as $attachment) {
-            $attachment->delete(); // This will delete both the file and the database record
+            $attachment->delete();
         }
 
-        // Delete the project
         $project->delete();
 
-        Toast::success('Le projet a été supprimé avec succès.');
+        Toast::info('Le projet a été supprimé avec succès.');
 
         return redirect()->route('platform.projects');
     }

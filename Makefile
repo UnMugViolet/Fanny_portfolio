@@ -40,7 +40,7 @@ clean: ## Clean the cache and compiled files
 fclean: ## Run database migrations
 	@echo "$(CLR_YELLOW) Running database migrations...$(CLR_RESET)"
 	@$(DOCKER) exec -it $(APP_CONTAINER) $(ARTISAN) migrate:fresh --seed
-	@sudo rm -rf ./public/storage/uploads/*
+	@sudo rm -rf storage/app/public/uploads/images*
 	@$(MAKE) clean
 
 user: ## Create a new admin user
@@ -72,6 +72,10 @@ down: ## Stop the production environment
 logs: ## View the logs of all the containers
 	@echo "$(CLR_YELLOW) Viewing production environment logs...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) logs -f
+
+tail: ## Tail the logs of the application container
+	@echo "$(CLR_YELLOW) Tailing application container logs...$(CLR_RESET)"
+	@$(DOCKER) exec -it $(APP_CONTAINER) tail -f storage/logs/laravel.log
 
 list: ## List all the routes from the application
 	@echo "$(CLR_YELLOW) Listing all application routes...$(CLR_RESET)"

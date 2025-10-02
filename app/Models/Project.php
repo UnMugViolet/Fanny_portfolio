@@ -84,19 +84,7 @@ class Project extends Model
      * Get all the associated images with this project.
      * 
      */
-    public function images(): MorphToMany
-    {
-        return $this->morphToMany(
-            Attachment::class,
-            'attachmentable',
-            'attachmentable'
-        );
-    }
-
-    /**
-     * Get the thumbnail for this project.
-     */
-    public function thumbnail(): MorphToMany
+    public function attachments(): MorphToMany
     {
         return $this->morphToMany(
             Attachment::class,
@@ -110,7 +98,7 @@ class Project extends Model
      */
     public function getImagesAttribute()
     {
-        return $this->images()->where('group', 'images')->get();
+        return $this->attachments()->where('group', 'images')->get();
     }
 
     /**
@@ -118,7 +106,7 @@ class Project extends Model
      */
     public function getThumbnailAttribute()
     {
-        return $this->thumbnail()->where('group', 'thumbnail')->get();
+        return $this->attachments()->where('group', 'thumbnail')->get();
     }
 
     /**
