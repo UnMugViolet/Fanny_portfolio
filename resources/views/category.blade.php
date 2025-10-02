@@ -9,7 +9,6 @@
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
 	<!-- SEO -->
-	<meta name="title" content="{{ $category->meta_title ?? $category->name ?? 'Fanny Séraudie' }}">
     <meta name="description" content="{{ $category->meta_description ?? 'Retrouvez la liste de nos articles sur des sujets variés afin de prendre soin de votre animal de compagnie' }}">
     <meta property="og:title" content="{{ $category->meta_title ?? $category->name ?? 'Fanny Séraudie' }}">
     <meta property="og:description" content="{{ $category->meta_description ?? 'Retrouvez la liste de nos articles sur des sujets variés afin de prendre soin de votre animal de compagnie' }}">
