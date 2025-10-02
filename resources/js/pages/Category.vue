@@ -82,8 +82,6 @@ const projects = ref(window.appData.projects || [])
 const showModal = ref(false)
 const currentProject = ref({})
 
-console.log('Loaded projects:', projects.value);
-
 const gridPositions = [
   "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
   "md:col-start-2 md:col-end-4 md:row-start-1 md:row-end-5",
