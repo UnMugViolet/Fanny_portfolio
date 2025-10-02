@@ -92,14 +92,7 @@ class ProjectListScreen extends Screen
     {
         return [
             Layout::table('projects', [
-
-                TD::make('order', 'Ordre')
-                    ->sort()
-                    ->width('100px')
-                    ->render(function (Project $project) {
-                        return $project->order ?? 0;
-                    }),
-
+                
                 TD::make('thumbnail', 'Vignette')
                     ->render(function (Project $project) {
                         $thumbnailUrl = $project->getThumbnailAttribute()[0]->url ?? null;
@@ -110,7 +103,7 @@ class ProjectListScreen extends Screen
                         }                    
                     }),
 
-                TD::make('name', 'Titre')
+                TD::make('title', 'Titre')
                     ->sort()
                     ->cantHide()
                     ->filter(TD::FILTER_TEXT)
@@ -119,16 +112,16 @@ class ProjectListScreen extends Screen
                             ->route('platform.project.edit', $project->id);
                     }),
 
+                TD::make('categories', 'Catégories')
+                    ->render(function (Project $project) {
+                        return $project->categories->pluck('name')->join(', ');
+                    }),
+
                 TD::make('description', 'Description')
                     ->render(function (Project $project) {
                         return Str::limit($project->description, 50);
                     }),
 
-                TD::make('created_at', 'Créé le')
-                    ->sort()
-                    ->render(function (Project $project) {
-                        return $project->created_at->format('j M Y');
-                    }),
 
                 TD::make('status', 'Statut')
                     ->sort()

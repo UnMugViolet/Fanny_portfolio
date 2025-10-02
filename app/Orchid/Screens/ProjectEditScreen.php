@@ -89,7 +89,7 @@ class ProjectEditScreen extends Screen
                     Input::make('project.order')
                         ->title('Ordre')
                         ->type('number')
-                        ->placeholder(Project::max('order') ?? 0 + 1)
+                        ->placeholder(Project::max('order') + 1)
                         ->min(1)
                         ->help('Ordre d\'affichage (plus petit = affiché en premier)'),
 
@@ -176,7 +176,7 @@ class ProjectEditScreen extends Screen
     public function save(Project $project, \Illuminate\Http\Request $request)
     {
         $request->validate([
-            'project.order' => 'nullable|integer|min:0',
+            'project.order' => 'nullable|integer|min:1',
             'project.title' => 'required|string|max:255',
             'project.description' => 'required|string',
             'project.status' => 'required|in:draft,published,archived',
@@ -190,8 +190,12 @@ class ProjectEditScreen extends Screen
         ]);
 
         $data = $request->get('project');
-
+        
+        if (!isset($data['order']) || $data['order'] === null) {
+            $data['order'] = Project::max('order') + 1;
+        }
         $project->fill($data)->save();
+
 
         if (isset($data['categories'])) {
             $project->categories()->sync($data['categories']);
