@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Orchid\Attachment\Attachable;
 use Orchid\Attachment\Models\Attachment;
 
 class Project extends Model
 {
+    use Attachable;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -94,7 +96,7 @@ class Project extends Model
     }
 
     /**
-     * Get only the image attachments (filtered by group)
+     * Get only the images linked to the project (filtered by group)
      */
     public function getImagesAttribute()
     {

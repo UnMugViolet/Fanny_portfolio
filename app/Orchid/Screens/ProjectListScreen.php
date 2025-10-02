@@ -102,7 +102,12 @@ class ProjectListScreen extends Screen
 
                 TD::make('thumbnail', 'Vignette')
                     ->render(function (Project $project) {
-                        return empty($project->thumbnail) ? '<img src="' . $project->thumbnail . '" alt="Thumbnail" style="width: 50px; height: auto;">' : 'N/A';
+                        $thumbnailUrl = $project->getThumbnailAttribute()[0]->url ?? null;
+                        if ($thumbnailUrl) {
+                            return '<img src="' . $thumbnailUrl . '" alt="Thumbnail" style="width: 50px; height: auto;">';
+                        } else {
+                            return 'N/A';
+                        }                    
                     }),
 
                 TD::make('name', 'Titre')

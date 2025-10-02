@@ -227,7 +227,7 @@ class ProjectEditScreen extends Screen
 
         Toast::success('Le projet a été enregistré avec succès.');
         
-        return redirect()->route('platform.project.edit', $project->id);
+        return redirect()->route('platform.projects');
     }
 
     /**
