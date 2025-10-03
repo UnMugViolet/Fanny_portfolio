@@ -35,7 +35,7 @@
               :key="index" 
               :src="image.url"
               :alt="image.alt || currentProject.title + '_' + index" 
-              class="w-full">
+              class="w-full mb-3">
           </div>
             <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
             <div class="sticky top-0 right-0 z-30 flex justify-end bg-white">

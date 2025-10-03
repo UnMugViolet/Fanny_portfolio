@@ -24,6 +24,19 @@ Route::get('/', function () {
     return view('app', compact('categories'));
 });
 
+Route::get('/mentions-legales', function () {
+    $categories = Category::orderBy('order')->orderBy('name')->get(['id', 'name', 'slug']);
+    return view('legal_notice', compact('categories'));
+});
+Route::get('/politique-de-confidentialite', function () {
+    $categories = Category::orderBy('order')->orderBy('name')->get(['id', 'name', 'slug']);
+    return view('privacy_policy', compact('categories'));
+});
+Route::get('/cgu', function () {
+    $categories = Category::orderBy('order')->orderBy('name')->get(['id', 'name', 'slug']);
+    return view('cgu', compact('categories'));
+});
+
 Route::get('/{category:slug}', [CategoryController::class, 'show'])
     ->where('category', '^(?!admin|access-admin-fanny|dashboard|orchid).*')
     ->name('category.show');
