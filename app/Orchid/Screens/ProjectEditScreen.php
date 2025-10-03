@@ -6,6 +6,7 @@ use App\Models\Category;
 use App\Models\Project;
 use App\Models\User;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 use Orchid\Attachment\Models\Attachment;
 use Orchid\Support\Facades\Alert;
 use Orchid\Screen\Actions\Button;
@@ -158,13 +159,29 @@ class ProjectEditScreen extends Screen
                         ->title('Galerie d\'images')
                         ->storage('public')
                         ->path('uploads/images')
-                        ->maxSize(2048)
+                        ->maxSize(2048) // 2MB
                         ->maxCount(50)
                         ->multiple()
                         ->acceptedFiles('image/*')
                         ->group('images')
                         ->targetRelativeUrl()
+                        ->errorTypeMessage('Fichier invalide. Seules les images sont autorisées.')
+                        ->errorMaxSizeMessage('Le fichier est trop volumineux. Taille maximale autorisée : 2MB.')
                         ->help('Téléchargez des images supplémentaires pour la galerie du projet (50 images maximum)'),
+                ]),
+                'Video' => Layout::rows([
+                    Attach::make('project.videos')
+                        ->title('Galerie de vidéos')
+                        ->storage('public')
+                        ->path('uploads/videos')
+                        ->maxSize(72400) // 70MB
+                        ->maxCount(10)
+                        ->multiple()
+                        ->group('videos')
+                        ->targetRelativeUrl()
+                        ->errorTypeMessage('Fichier invalide. Seules les vidéos sont autorisées.')
+                        ->errorMaxSizeMessage('Le fichier est trop volumineux. Taille maximale autorisée : 70MB.')
+                        ->help('Téléchargez des vidéos supplémentaires pour la galerie du projet (10 vidéos maximum)'),
                 ]),
             ])
         ];
@@ -173,8 +190,9 @@ class ProjectEditScreen extends Screen
     /**
      * Save the project.
      */
-    public function save(Project $project, \Illuminate\Http\Request $request)
+    public function save(Project $project, Request $request)
     {
+
         $request->validate([
             'project.order' => 'nullable|integer|min:1',
             'project.title' => 'required|string|max:255',
@@ -185,6 +203,9 @@ class ProjectEditScreen extends Screen
             'project.categories.*' => 'exists:categories,id',
             'project.thumbnail' => 'nullable',
             'project.images' => 'nullable',
+            'project.tools' => 'nullable|array',
+            'project.videos' => 'nullable',
+            'project.videos.*' => 'exists:attachments,id',
         ]);
 
         $data = $request->get('project');
@@ -211,12 +232,18 @@ class ProjectEditScreen extends Screen
         // Handle thumbnail and images (MorphToMany relationship)
         $newThumbnailId = is_array($data['thumbnail']) ? $data['thumbnail'] : [$data['thumbnail']];
         $newImageIds = isset($data['images']) ? (is_array($data['images']) ? $data['images'] : [$data['images']]) : [];
+        $newVideoIds = isset($data['videos']) ? (is_array($data['videos']) ? $data['videos'] : [$data['videos']]) : [];
+
+        Log::info('New newVideoIds IDs: ' . implode(',', $newVideoIds));
 
         // Filter out empty values and non-integer IDs
         $newThumbnailId = array_filter($newThumbnailId, function ($id) {
             return !empty($id) && is_numeric($id);
         });
         $newImageIds = array_filter($newImageIds, function ($id) {
+            return !empty($id) && is_numeric($id);
+        });
+        $newVideoIds = array_filter($newVideoIds, function ($id) {
             return !empty($id) && is_numeric($id);
         });
 
@@ -231,8 +258,10 @@ class ProjectEditScreen extends Screen
             $project->attachments()->syncWithoutDetaching($newThumbnailId);
         }
         if (!empty($newImageIds)) {
-
             $project->attachments()->syncWithoutDetaching($newImageIds);
+        }
+        if (!empty($newVideoIds)) {
+            $project->attachments()->syncWithoutDetaching($newVideoIds);
         }
 
         Toast::success('Le projet a été enregistré avec succès.');

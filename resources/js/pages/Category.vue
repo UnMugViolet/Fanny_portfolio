@@ -9,14 +9,10 @@
 
     <section v-for="(chunk, chunkIndex) in chunkedProjects" :key="chunkIndex"
       class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]">
-      <div 
-        v-for="(project, index) in chunk" 
-        :key="project.id"
-        @click="openModal(project)"
-        :class="[
-          getGridPosition(index),
-          'rounded-md bg-center bg-cover transition-transform duration-500 ease-in-out transform hover:scale-105 cursor-pointer'
-        ]"
+      <div v-for="(project, index) in chunk" :key="project.id" @click="openModal(project)" :class="[
+        getGridPosition(index),
+        'rounded-md bg-center bg-cover transition-transform duration-500 ease-in-out transform hover:scale-105 cursor-pointer'
+      ]"
         :style="{ backgroundImage: `url(${project.thumbnail?.[0]?.url || 'https://placehold.co/600x400?text=' + (index + 1 + chunkIndex * 8)})` }">
       </div>
     </section>
@@ -30,42 +26,39 @@
         <div @click="closeModal" class="absolute inset-0 bg-black opacity-75"></div>
         <div class="bg-white w-10/12 h-5/6 flex flex-col-reverse md:flex-row z-20 rounded-md">
           <div class="w-full h-1/2 md:h-full md:w-1/2 overflow-y-scroll scrollbar-none">
-            <img 
-              v-for="(image, index) in currentProject.images"
-              :key="index" 
-              :src="image.url"
-              :alt="image.alt || currentProject.title + '_' + index" 
+            <video v-if="currentProject.videos && currentProject.videos.length"
+              v-for="(video, vIndex) in currentProject.videos" :key="'video-' + vIndex" :src="video.url" controls
               class="w-full mb-3">
+              Your browser does not support the video tag.
+            </video>
+            <img v-if="currentProject.images && currentProject.images.length"
+              v-for="(image, index) in currentProject.images" :key="index" :src="image.url"
+              :alt="image.alt || currentProject.title + '_' + index" class="w-full mb-3">
+
           </div>
-            <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
+          <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
             <div class="sticky top-0 right-0 z-30 flex justify-end bg-white">
               <button @click="closeModal"
-              class="absolute p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
-              &#10005;
+                class="absolute p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
+                &#10005;
               </button>
             </div>
             <div class="pt-10 md:py-14 px-8 overflow-y-scroll">
               <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
-              <div
-                v-if="currentProject.tools && currentProject.tools.length"
-                class="mb-4 flex flex-wrap gap-2">
-                <span
-                  v-for="tool in currentProject.tools"
-                  :key="tool.id"
-                  :style="{
-                    border: `2px solid ${tool.color}`,
-                    backgroundColor: `${tool.color}22`,
-                    color: tool.color,
-                  }"
-                  class="text-sm font-medium px-3 py-1 rounded-full mr-2 mb-2 transition-colors duration-200 hover:bg-opacity-30"
-                >
+              <div v-if="currentProject.tools && currentProject.tools.length" class="mb-4 flex flex-wrap gap-2">
+                <span v-for="tool in currentProject.tools" :key="tool.id" :style="{
+                  border: `2px solid ${tool.color}`,
+                  backgroundColor: `${tool.color}22`,
+                  color: tool.color,
+                }"
+                  class="text-sm font-medium px-3 py-1 rounded-full mr-2 mb-2 transition-colors duration-200 hover:bg-opacity-30">
                   {{ tool.name }}
                 </span>
 
               </div>
               <div class="text-black" v-html="currentProject.description"></div>
             </div>
-            </div>
+          </div>
         </div>
       </div>
     </transition>

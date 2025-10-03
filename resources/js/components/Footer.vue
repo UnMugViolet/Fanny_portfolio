@@ -3,7 +3,7 @@
 		<section class="flex md:flex-row flex-col justify-between my-10">
 			<div class="w-full md:w-1/3">
 				<h2 class="text-xl font-bold mb-2">Fanny Séraudie</h2>
-				<p class="mb-1">Illustratrice, Graphiste &amp; animatrice 2D</p>
+				<p class="mb-1">Illustratrice &amp; animatrice 2D</p>
 				<a href="https://www.instagram.com/fannyquidessine_/" target="_blank"
 					class="fill-brand-burgundy hover:fill-blue-400 transition-colors duration-200">
 					<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" class="w-7 h-7 inline mr-2">
