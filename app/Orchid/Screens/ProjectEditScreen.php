@@ -159,12 +159,12 @@ class ProjectEditScreen extends Screen
                         ->storage('public')
                         ->path('uploads/images')
                         ->maxSize(2048)
-                        ->maxCount(10)
+                        ->maxCount(50)
                         ->multiple()
                         ->acceptedFiles('image/*')
                         ->group('images')
                         ->targetRelativeUrl()
-                        ->help('Téléchargez des images supplémentaires pour la galerie du projet (10 images maximum)'),
+                        ->help('Téléchargez des images supplémentaires pour la galerie du projet (50 images maximum)'),
                 ]),
             ])
         ];
