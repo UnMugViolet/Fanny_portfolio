@@ -32,6 +32,7 @@ class UserSeeder extends Seeder
                     "platform.systems.attachment" => true,
                     "platform.categories" => true,
                     "platform.projects" => true,
+                    "platform.tools" => true,
                 ],
                 'email_verified_at' => now(),
             ]
@@ -50,6 +51,7 @@ class UserSeeder extends Seeder
                     "platform.systems.attachment" => true,
                     "platform.categories" => true,
                     "platform.projects" => true,
+                    "platform.tools" => true,
                 ],
                 'email_verified_at' => now(),
             ]

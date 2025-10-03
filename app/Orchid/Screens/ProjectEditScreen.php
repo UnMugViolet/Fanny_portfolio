@@ -202,6 +202,12 @@ class ProjectEditScreen extends Screen
             $project->categories()->detach();
         }
 
+        if (isset($data['tools'])) {
+            $project->tools()->sync($data['tools']);
+        } else {
+            $project->tools()->detach();
+        }
+
         // Handle thumbnail and images (MorphToMany relationship)
         $newThumbnailId = is_array($data['thumbnail']) ? $data['thumbnail'] : [$data['thumbnail']];
         $newImageIds = isset($data['images']) ? (is_array($data['images']) ? $data['images'] : [$data['images']]) : [];

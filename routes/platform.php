@@ -12,6 +12,8 @@ use App\Orchid\Screens\CategoryListScreen;
 use App\Orchid\Screens\CategoryEditScreen;
 use App\Orchid\Screens\ProjectEditScreen;
 use App\Orchid\Screens\ProjectListScreen;
+use App\Orchid\Screens\ToolEditScreen;
+use App\Orchid\Screens\ToolListScreen;
 use Illuminate\Support\Facades\Route;
 use Tabuna\Breadcrumbs\Trail;
 
@@ -122,3 +124,23 @@ Route::screen('projects/create', ProjectEditScreen::class)
         ->parent('platform.categories')
         ->push(__('Create Project'), route('platform.project.create')));
 
+// Platform > Tools
+Route::screen('tools', ToolListScreen::class)
+    ->name('platform.tools')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.index')
+        ->push(__('Tools'), route('platform.tools')));
+
+// Platform > Tools > Edit
+Route::screen('tools/{tool}/edit', ToolEditScreen::class)
+    ->name('platform.tool.edit')
+    ->breadcrumbs(fn (Trail $trail, $tool) => $trail
+        ->parent('platform.tools')
+        ->push($tool->name ?? __('Edit Tool'), route('platform.tool.edit', $tool)));
+
+// Platform > Tools > Create
+Route::screen('tools/create', ToolEditScreen::class)
+    ->name('platform.tool.create')
+    ->breadcrumbs(fn (Trail $trail) => $trail
+        ->parent('platform.tools')
+        ->push(__('Create Tool'), route('platform.tool.create')));
