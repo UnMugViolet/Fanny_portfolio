@@ -45,7 +45,7 @@
               </button>
             </div>
             <div class="pt-10 md:py-14 px-8 overflow-y-scroll">
-              <h2 class="text-black text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
+              <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
               <div
                 v-if="currentProject.tools && currentProject.tools.length"
                 class="mb-4 flex flex-wrap gap-2">

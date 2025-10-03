@@ -10,7 +10,7 @@
 
     <!-- Meta -->
     <meta name="description" content="Découvrez le portfolio de Fanny Séraudie, illustratrice et animatrice 2D. Explorez ses projets créatifs et son univers artistique unique.">
-    <meta property="og:title" content="Fanny Séraudie - Illustratrice et animatrice 2D">
+    <meta property="og:title" content="Fanny Séraudie - Illustratrice et animatrice 2D | Portfolio">
     <meta property="og:description" content="Découvrez le portfolio de Fanny Séraudie, illustratrice et animatrice 2D. Explorez ses projets créatifs et son univers artistique unique.">
     <meta property="og:image" content="{{ asset('img/logo-fanny-seraudie.webp') }}">
     <meta name="robots" content="index, follow">
