@@ -75,7 +75,7 @@
 		</svg>
 		<div class="dashboard-card-title">Google Search Console</div>
 		<div class="dashboard-card-desc">Accédez a la Google Search Console.</div>
-		<a href="https://search.google.com/search-console" target="_blank">Voir la Search Console</a>
+		<a href="https://search.google.com/search-console?resource_id=sc-domain:fanny-seraudie.fr" target="_blank">Voir la Search Console</a>
 	</div>
 	<!-- Matomo -->
 	<div class="dashboard-card">

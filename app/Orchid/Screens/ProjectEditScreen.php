@@ -143,7 +143,6 @@ class ProjectEditScreen extends Screen
                         ->group('thumbnail')
                         ->targetRelativeUrl()
                         ->help('Téléchargez une image miniature pour le projet'),
-
                 ]),
                 'Outils' => Layout::rows([
                     Relation::make('project.tools')
@@ -169,19 +168,12 @@ class ProjectEditScreen extends Screen
                         ->errorMaxSizeMessage('Le fichier est trop volumineux. Taille maximale autorisée : 2MB.')
                         ->help('Téléchargez des images supplémentaires pour la galerie du projet (50 images maximum)'),
                 ]),
-                'Video' => Layout::rows([
-                    Attach::make('project.videos')
-                        ->title('Galerie de vidéos')
-                        ->storage('public')
-                        ->path('uploads/videos')
-                        ->maxSize(72400) // 70MB
-                        ->maxCount(10)
-                        ->multiple()
-                        ->group('videos')
-                        ->targetRelativeUrl()
-                        ->errorTypeMessage('Fichier invalide. Seules les vidéos sont autorisées.')
-                        ->errorMaxSizeMessage('Le fichier est trop volumineux. Taille maximale autorisée : 70MB.')
-                        ->help('Téléchargez des vidéos supplémentaires pour la galerie du projet (10 vidéos maximum)'),
+                'Vidéos' => Layout::rows([
+                    Input::make('project.youtube_url')
+                        ->title('URL YouTube')
+                        ->type('url')
+                        ->placeholder('https://www.youtube.com/watch?v=example')
+                        ->help('Ajoutez une URL YouTube pour intégrer une vidéo dans le projet'),
                 ]),
             ])
         ];
@@ -204,8 +196,7 @@ class ProjectEditScreen extends Screen
             'project.thumbnail' => 'nullable',
             'project.images' => 'nullable',
             'project.tools' => 'nullable|array',
-            'project.videos' => 'nullable',
-            'project.videos.*' => 'exists:attachments,id',
+            'project.youtube_url' => 'nullable|url',
         ]);
 
         $data = $request->get('project');
@@ -232,18 +223,12 @@ class ProjectEditScreen extends Screen
         // Handle thumbnail and images (MorphToMany relationship)
         $newThumbnailId = is_array($data['thumbnail']) ? $data['thumbnail'] : [$data['thumbnail']];
         $newImageIds = isset($data['images']) ? (is_array($data['images']) ? $data['images'] : [$data['images']]) : [];
-        $newVideoIds = isset($data['videos']) ? (is_array($data['videos']) ? $data['videos'] : [$data['videos']]) : [];
-
-        Log::info('New newVideoIds IDs: ' . implode(',', $newVideoIds));
 
         // Filter out empty values and non-integer IDs
         $newThumbnailId = array_filter($newThumbnailId, function ($id) {
             return !empty($id) && is_numeric($id);
         });
         $newImageIds = array_filter($newImageIds, function ($id) {
-            return !empty($id) && is_numeric($id);
-        });
-        $newVideoIds = array_filter($newVideoIds, function ($id) {
             return !empty($id) && is_numeric($id);
         });
 
@@ -259,9 +244,6 @@ class ProjectEditScreen extends Screen
         }
         if (!empty($newImageIds)) {
             $project->attachments()->syncWithoutDetaching($newImageIds);
-        }
-        if (!empty($newVideoIds)) {
-            $project->attachments()->syncWithoutDetaching($newVideoIds);
         }
 
         Toast::success('Le projet a été enregistré avec succès.');

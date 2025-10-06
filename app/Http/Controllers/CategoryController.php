@@ -36,6 +36,7 @@ class CategoryController extends Controller
                 'thumbnail',
                 'images',
             ])
+            ->where('status', 'published')
             ->orderBy('order', 'asc')
             ->get();
         

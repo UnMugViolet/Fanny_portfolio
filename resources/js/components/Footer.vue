@@ -1,6 +1,6 @@
 <template>
 	<footer class="sm:px-24 px-4">
-		<section class="flex md:flex-row flex-col justify-between my-10">
+		<section class="flex md:flex-row flex-col justify-between my-10 space-y-4 px-2 md:px-0">
 			<div class="w-full md:w-1/3">
 				<h2 class="text-xl font-bold mb-2">Fanny Séraudie</h2>
 				<p class="mb-1">Illustratrice &amp; animatrice 2D</p>

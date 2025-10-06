@@ -24,6 +24,7 @@ class Project extends Model
         'status',
         'order',
         'author_id',
+        'youtube_url',
     ];
 
     /**
