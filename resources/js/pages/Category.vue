@@ -8,7 +8,7 @@
     </section>
 
     <section v-for="(chunk, chunkIndex) in chunkedProjects" :key="chunkIndex"
-      class="grid lg:grid-cols-4 lg:grid-rows-12 grid-cols-1 gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]">
+      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]">
       <div v-for="(project, index) in chunk" :key="project.id" @click="openModal(project)" :class="[
         getGridPosition(index),
         'rounded-md bg-center bg-cover transition-transform duration-500 ease-in-out transform hover:scale-105 cursor-pointer'
@@ -117,14 +117,14 @@ const showModal = ref(false)
 const currentProject = ref({})
 
 const gridPositions = [
-  "lg:col-start-1 lg:col-end-2 lg:row-start-1 lg:row-end-6 ",
-  "lg:col-start-2 lg:col-end-4 lg:row-start-1 lg:row-end-5",
-  "lg:col-start-4 lg:col-end-5 lg:row-start-1 lg:row-end-9",
-  "lg:col-start-1 lg:col-end-2 lg:row-start-6 lg:row-end-10",
-  "lg:col-start-2 lg:col-end-3 lg:row-start-5 lg:row-end-10",
-  "lg:col-start-3 lg:col-end-4 lg:row-start-5 lg:row-end-9",
-  "lg:col-start-1 lg:col-end-3 lg:row-start-10 lg:row-end-13",
-  "lg:col-start-3 lg:col-end-5 lg:row-start-9 lg:row-end-13",
+  "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
+  "md:col-start-2 md:col-end-4 md:row-start-1 md:row-end-5",
+  "md:col-start-4 md:col-end-5 md:row-start-1 md:row-end-9",
+  "md:col-start-1 md:col-end-2 md:row-start-6 md:row-end-10",
+  "md:col-start-2 md:col-end-3 md:row-start-5 md:row-end-10",
+  "md:col-start-3 md:col-end-4 md:row-start-5 md:row-end-9",
+  "md:col-start-1 md:col-end-3 md:row-start-10 md:row-end-13",
+  "md:col-start-3 md:col-end-5 md:row-start-9 md:row-end-13",
 ]
 
 console.log('Projects:', projects.value);
