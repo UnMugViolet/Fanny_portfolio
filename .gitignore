@@ -4,6 +4,7 @@
 .env.backup
 .env.production
 .phpactor.json
+package-lock.json
 .phpunit.result.cache
 /.fleet
 /.idea
@@ -22,3 +23,7 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Project specific
+supervisord.pid
+
