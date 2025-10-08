@@ -60,12 +60,12 @@ class PlatformProvider extends OrchidServiceProvider
             Menu::make('Projets')
                 ->icon('bs.bookmarks')
                 ->route('platform.projects')
-                ->permission('platform.projects'),
+                ->permission('platform.categories'),
 
             Menu::make('Outils')
                 ->icon('bs.tools')
                 ->route('platform.tools')
-                ->permission('platform.tools'),
+                ->permission('platform.categories'),
         ];
     }
 
