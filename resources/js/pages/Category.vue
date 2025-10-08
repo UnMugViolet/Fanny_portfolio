@@ -32,8 +32,8 @@
         ]">
           <!-- Description Section (top when video present) -->
           <div v-if="currentProject.youtube_url" 
-               class="w-full p-4 md:p-8 md:max-h-1/3 h-2/3 overflow-y-auto scrollbar-thin">
-            <div class="flex justify-end mb-4">
+               class="w-full p-4 md:p-8 h-2/3 md:h-1/3 overflow-y-auto scrollbar-thin">
+            <div class="flex justify-end">
               <button @click="closeModal"
                 class="text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
                 &#10005;
@@ -56,12 +56,12 @@
           <!-- Video Section (full width bottom when present) -->
           <div v-if="currentProject.youtube_url" 
                class="w-full md:flex-1 flex items-center justify-center p-4 min-h-0">
-            <iframe
-              :src="currentProject.youtube_url"
-              :title="`${currentProject.title} - Video`"
-              class="w-full h-full border-0 max-h-full"
-              allowfullscreen>
-            </iframe>
+              <lite-youtube 
+                v-if="currentProject.youtube_url"
+                :videoid="extractVideoId(currentProject.youtube_url)"
+                :playlabel="`Play: ${currentProject.title}`"
+                class="w-full h-64"
+              ></lite-youtube>
           </div>
 
           <!-- Original Layout (when no video) -->
@@ -110,6 +110,8 @@
 
 <script setup>
 import { ref, computed } from 'vue'
+import 'lite-youtube-embed/src/lite-yt-embed.css'
+import 'lite-youtube-embed/src/lite-yt-embed.js'
 
 const category = ref(window.appData.category || [])
 const projects = ref(window.appData.projects || [])
@@ -126,8 +128,6 @@ const gridPositions = [
   "md:col-start-1 md:col-end-3 md:row-start-10 md:row-end-13",
   "md:col-start-3 md:col-end-5 md:row-start-9 md:row-end-13",
 ]
-
-console.log('Projects:', projects.value);
 
 // Split projects into chunks of 8
 const chunkedProjects = computed(() => {
@@ -163,6 +163,13 @@ const closeModal = () => {
   document.body.classList.remove('overflow-hidden');
     window.removeEventListener('keydown', handleEsc);
 };
+
+
+const extractVideoId = (url) => {
+  const regex = /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+  const match = url.match(regex)
+  return match ? match[1] : null
+}
 
 </script>
 
