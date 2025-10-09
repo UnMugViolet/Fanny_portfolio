@@ -55,12 +55,12 @@
 
           <!-- Video Section (full width bottom when present) -->
           <div v-if="currentProject.youtube_url" 
-               class="w-full md:flex-1 flex items-center justify-center p-4 min-h-0">
+               class="w-full md:flex-1 flex items-center justify-center p-4 h-2/3">
               <lite-youtube 
                 v-if="currentProject.youtube_url"
                 :videoid="extractVideoId(currentProject.youtube_url)"
                 :playlabel="`Play: ${currentProject.title}`"
-                class="w-full h-64"
+                class="w-full h-full"
               ></lite-youtube>
           </div>
 
@@ -187,5 +187,21 @@ const extractVideoId = (url) => {
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity .5s;
+}
+
+:deep(lite-youtube) {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  aspect-ratio: unset !important;
+}
+
+:deep(lite-youtube::before) {
+  padding-bottom: 0 !important;
+}
+
+:deep(lite-youtube > iframe) {
+  width: 100% !important;
+  height: 100% !important;
 }
 </style>
