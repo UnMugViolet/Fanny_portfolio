@@ -8,7 +8,7 @@
     </section>
 
     <section v-for="(chunk, chunkIndex) in chunkedProjects" :key="chunkIndex"
-      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[40svh]">
+      class="grid md:grid-cols-4 md:grid-rows-12 grid-cols-1 gap-8 md:gap-4 lg:gap-8 md:h-svh mb-9 auto-rows-[55svh]">
       <div v-for="(project, index) in chunk" :key="project.id" @click="openModal(project)" :class="[
         getGridPosition(index),
         'rounded-md bg-center bg-cover transition-transform duration-500 ease-in-out transform hover:scale-105 cursor-pointer'
@@ -32,14 +32,14 @@
         ]">
           <!-- Description Section (top when video present) -->
           <div v-if="currentProject.youtube_url" 
-               class="w-full p-4 md:p-8 h-2/3 md:h-1/3 overflow-y-auto scrollbar-thin">
+               class="w-full p-4 md:pt-8 md:px-8 md:h-5/12 overflow-y-auto scrollbar-thin">
             <div class="flex justify-end">
               <button @click="closeModal"
                 class="text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
                 &#10005;
               </button>
             </div>
-            <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
+            <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-4 md:mb-6">{{ currentProject.title }}</h2>
             <div v-if="currentProject.tools && currentProject.tools.length" class="mb-4 flex flex-wrap gap-2">
               <span v-for="tool in currentProject.tools" :key="tool.id" :style="{
                 border: `2px solid ${tool.color}`,
@@ -55,7 +55,7 @@
 
           <!-- Video Section (full width bottom when present) -->
           <div v-if="currentProject.youtube_url" 
-               class="w-full md:flex-1 flex items-center justify-center p-4 h-2/3">
+               class="w-full md:flex-1 flex items-center justify-center p-4 h-2/3 md:h-7/12">
               <lite-youtube 
                 v-if="currentProject.youtube_url"
                 :videoid="extractVideoId(currentProject.youtube_url)"
@@ -67,7 +67,7 @@
           <!-- Original Layout (when no video) -->
           <template v-else>
             <!-- Images Section -->
-            <div class="w-full h-1/2 md:h-full md:w-1/2 overflow-y-scroll scrollbar-none">
+            <div class="w-full h-2/3 md:h-full md:w-2/3 overflow-y-scroll scrollbar-none">
               <div v-if="currentProject.images && currentProject.images.length">
                 <img v-for="(image, index) in currentProject.images" 
                      :key="index" 
@@ -78,7 +78,7 @@
             </div>
             
             <!-- Description Section -->
-            <div class="w-full h-1/2 md:h-full md:w-1/2 relative overflow-auto scrollbar-thin">
+            <div class="w-full h-1/3 md:h-full md:w-1/3 relative overflow-auto scrollbar-thin">
               <div class="sticky top-0 right-0 z-30 flex justify-end bg-white">
                 <button @click="closeModal"
                   class="absolute p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
@@ -86,8 +86,8 @@
                 </button>
               </div>
               <div class="pt-10 md:py-14 px-8 overflow-y-scroll">
-                <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-6">{{ currentProject.title }}</h2>
-                <div v-if="currentProject.tools && currentProject.tools.length" class="mb-4 flex flex-wrap gap-2">
+                <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-4 md:mb-6">{{ currentProject.title }}</h2>
+                <div v-if="currentProject.tools && currentProject.tools.length" class="mb-2 md:mb-4 flex flex-wrap gap-2">
                   <span v-for="tool in currentProject.tools" :key="tool.id" :style="{
                     border: `2px solid ${tool.color}`,
                     backgroundColor: `${tool.color}22`,
