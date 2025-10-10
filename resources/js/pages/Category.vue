@@ -97,7 +97,7 @@
                     {{ tool.name }}
                   </span>
                 </div>
-                <div class="text-black" v-html="currentProject.description"></div>
+                <div class="text-black mb-4" v-html="currentProject.description"></div>
               </div>
             </div>
           </template>
