@@ -27,8 +27,9 @@
           @click="closeModal"
           class="absolute inset-0 bg-black opacity-75"></div>
         <div :class="[
-          'bg-white w-10/12 h-5/6 z-20 rounded-md',
-          currentProject.youtube_url ? 'flex flex-col' : 'flex flex-col-reverse md:flex-row'
+          'bg-white h-5/6 z-20 rounded-md',
+          modalWidthClass,
+          currentProject.youtube_url ? 'flex flex-col' : 'flex flex-col-reverse lg:flex-row'
         ]">
           <!-- Description Section (top when video present) -->
           <div v-if="currentProject.youtube_url" 
@@ -67,25 +68,27 @@
           <!-- Original Layout (when no video) -->
           <template v-else>
             <!-- Images Section -->
-            <div class="w-full h-2/3 md:h-full md:w-2/3 overflow-y-scroll scrollbar-none">
-              <div v-if="currentProject.images && currentProject.images.length">
-                <img v-for="(image, index) in currentProject.images" 
+            <div class="w-full h-2/3 lg:h-full lg:w-2/3 flex flex-col overflow-hidden">
+              <div v-if="currentProject.images && currentProject.images.length" class="flex-1 overflow-y-auto scrollbar-thin">
+                <div v-for="(image, index) in currentProject.images" 
                      :key="index" 
-                     :src="image.url"
-                     :alt="image.alt || currentProject.title + '_' + index" 
-                     class="w-full mb-3">
+                     class="w-full h-full flex justify-center mb-4 last:mb-0">
+                  <img :src="image.url"
+                       :alt="image.alt || currentProject.title + '_' + index" 
+                       class="max-w-full h-full object-contain"/>
+                </div>
               </div>
             </div>
             
             <!-- Description Section -->
-            <div class="w-full h-1/3 md:h-full md:w-1/3 relative overflow-auto scrollbar-thin">
+            <div class="w-full h-1/3 lg:h-full lg:w-1/3 relative flex flex-col overflow-hidden">
               <div class="sticky top-0 right-0 z-30 flex justify-end bg-white">
                 <button @click="closeModal"
                   class="absolute p-5 text-black text-2xl transition-colors duration-200 hover:text-zinc-800">
                   &#10005;
                 </button>
               </div>
-              <div class="pt-10 md:py-14 px-8 overflow-y-scroll">
+              <div class="flex-1 pt-10 md:py-14 px-8 overflow-y-auto scrollbar-thin">
                 <h2 class="text-brand-burgundy text-2xl md:text-4xl font-semibold mb-4 md:mb-6">{{ currentProject.title }}</h2>
                 <div v-if="currentProject.tools && currentProject.tools.length" class="mb-2 md:mb-4 flex flex-wrap gap-2">
                   <span v-for="tool in currentProject.tools" :key="tool.id" :style="{
@@ -117,6 +120,8 @@ const category = ref(window.appData.category || [])
 const projects = ref(window.appData.projects || [])
 const showModal = ref(false)
 const currentProject = ref({})
+const imageOrientations = ref({})
+const imagesLoaded = ref(false)
 
 const gridPositions = [
   "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
@@ -145,17 +150,69 @@ const getGridPosition = (index) => {
   return gridPositions[index % gridPositions.length]
 }
 
+// Determine if modal should use portrait layout
+const isPortraitLayout = computed(() => {
+  if (!currentProject.value.images || currentProject.value.images.length === 0) {
+    return false
+  }
+  
+  // Check if any image is portrait (height > width)
+  return currentProject.value.images.some(image => {
+    const orientation = imageOrientations.value[image.url]
+    return orientation && orientation.height > orientation.width
+  })
+})
+
+// Get modal width class based on layout
+const modalWidthClass = computed(() => {
+  if (currentProject.value.youtube_url) {
+    return 'w-10/12 max-w-[90rem]'
+  }
+  
+  return isPortraitLayout.value ? 'w-10/12 lg:w-8/12  md:max-w-7xl' : 'w-11/12 '
+})
+
+// Load image dimensions
+const loadImageDimensions = (imageUrl) => {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => {
+      imageOrientations.value[imageUrl] = {
+        width: img.naturalWidth,
+        height: img.naturalHeight
+      }
+      resolve()
+    }
+    img.onerror = () => {
+      imageOrientations.value[imageUrl] = {
+        width: 1,
+        height: 1
+      }
+      resolve()
+    }
+    img.src = imageUrl
+  })
+}
+
 const handleEsc = (e) => {
   if (e.key === 'Escape' && showModal.value) {
     closeModal();
   }
 };
 
-const openModal = (project) => {
+const openModal = async (project) => {
   currentProject.value = project;
+  imagesLoaded.value = false;
+  
+  // Load image dimensions if project has images
+  if (project.images && project.images.length > 0) {
+    await Promise.all(project.images.map(image => loadImageDimensions(image.url)));
+    imagesLoaded.value = true;
+  }
+  
   showModal.value = true;
   document.body.classList.add('overflow-hidden');
-    window.addEventListener('keydown', handleEsc);
+  window.addEventListener('keydown', handleEsc);
 };
 
 const closeModal = () => {
