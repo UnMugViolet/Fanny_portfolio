@@ -69,13 +69,64 @@
           <template v-else>
             <!-- Images Section -->
             <div class="w-full h-2/3 lg:h-full lg:w-2/3 flex flex-col overflow-hidden">
-              <div v-if="currentProject.images && currentProject.images.length" class="flex-1 overflow-y-auto scrollbar-thin">
+              <div v-if="currentProject.images && currentProject.images.length" 
+                   class="flex-1 overflow-y-auto scrollbar-thin">
                 <div v-for="(image, index) in currentProject.images" 
                      :key="index" 
-                     class="w-full h-full flex justify-center mb-4 last:mb-0">
+                     class="w-full h-full flex justify-center mb-4 last:mb-0 relative overflow-hidden"
+                     @wheel="(e) => handleWheel(e, image.url)"
+                     @mousedown="(e) => handleMouseDown(e, image.url)"
+                     @mousemove="(e) => handleMouseMove(e, image.url)">
+                  
+                  <!-- Zoom Controls - Only show for active image -->
+                  <div v-if="isImageActive(image.url)" 
+                       class="absolute top-4 right-4 z-10 flex flex-col gap-2 bg-black bg-opacity-50 rounded-lg p-2">
+                    <button @click="() => {
+                      initZoomState(image.url);
+                      const state = zoomStates[image.url];
+                      state.scale = Math.min(3, state.scale + 0.2);
+                    }" 
+                    class="text-white hover:text-gray-300 w-8 h-8 flex items-center justify-center text-lg font-bold">
+                      +
+                    </button>
+                    <button @click="() => {
+                      initZoomState(image.url);
+                      const state = zoomStates[image.url];
+                      state.scale = Math.max(1, state.scale - 0.2);
+                      if (state.scale === 1) {
+                        state.translateX = 0;
+                        state.translateY = 0;
+                      }
+                    }" 
+                    class="text-white hover:text-gray-300 w-8 h-8 flex items-center justify-center text-lg font-bold">
+                      −
+                    </button>
+                    <button @click="() => resetZoom(image.url)" 
+                    class="text-white hover:text-gray-300 w-8 h-8 flex items-center justify-center text-sm">
+                      ⌂
+                    </button>
+                  </div>
+
+                  <!-- Click indicator for non-active images -->
+                  <div v-if="!isImageActive(image.url)" 
+                       class="absolute inset-0 flex items-center justify-center bg-black bg-opacity-0 hover:bg-opacity-10 transition-all duration-200">
+                    <div class="text-white opacity-0 hover:opacity-100 transition-opacity duration-200 bg-black bg-opacity-50 rounded-lg px-4 py-2">
+                      Click to zoom
+                    </div>
+                  </div>
+
                   <img :src="image.url"
                        :alt="image.alt || currentProject.title + '_' + index" 
-                       class="max-w-full h-full object-contain"/>
+                       :class="[
+                         'max-w-full h-full object-contain transition-transform duration-150 ease-out',
+                         isImageActive(image.url) ? 'cursor-move' : 'cursor-pointer'
+                       ]"
+                       :style="{ 
+                         transform: getImageTransform(image.url),
+                         transformOrigin: 'center center'
+                       }"
+                       @click="(e) => handleImageClick(image.url, e)"
+                       draggable="false"/>
                 </div>
               </div>
             </div>
@@ -122,6 +173,12 @@ const showModal = ref(false)
 const currentProject = ref({})
 const imageOrientations = ref({})
 const imagesLoaded = ref(false)
+
+// Zoom state management
+const zoomStates = ref({})
+const isDragging = ref(false)
+const lastMousePos = ref({ x: 0, y: 0 })
+const activeImageUrl = ref(null)
 
 const gridPositions = [
   "md:col-start-1 md:col-end-2 md:row-start-1 md:row-end-6 ",
@@ -194,6 +251,124 @@ const loadImageDimensions = (imageUrl) => {
   })
 }
 
+// Initialize zoom state for an image
+const initZoomState = (imageUrl) => {
+  if (!zoomStates.value[imageUrl]) {
+    zoomStates.value[imageUrl] = {
+      scale: 1,
+      translateX: 0,
+      translateY: 0
+    }
+  }
+}
+
+// Handle image click to activate zoom
+const handleImageClick = (imageUrl, event) => {
+  // Prevent modal close when clicking on image
+  event.stopPropagation()
+  
+  // Set this image as active for zooming
+  activeImageUrl.value = imageUrl
+  initZoomState(imageUrl)
+}
+
+// Check if an image is active for zooming
+const isImageActive = (imageUrl) => {
+  return activeImageUrl.value === imageUrl
+}
+
+// Get transform style for an image
+const getImageTransform = (imageUrl) => {
+  const state = zoomStates.value[imageUrl]
+  if (!state) return ''
+  return `scale(${state.scale}) translate(${state.translateX}px, ${state.translateY}px)`
+}
+
+// Handle wheel zoom
+const handleWheel = (event, imageUrl) => {
+  // Only allow zoom if this image is active
+  if (activeImageUrl.value !== imageUrl) {
+    return // Allow normal scrolling
+  }
+  
+  const container = event.currentTarget
+  const rect = container.getBoundingClientRect()
+  
+  // Check if mouse is over the container (not scrolling past it)
+  const mouseX = event.clientX
+  const mouseY = event.clientY
+  
+  if (mouseX >= rect.left && mouseX <= rect.right && mouseY >= rect.top && mouseY <= rect.bottom) {
+    initZoomState(imageUrl)
+    const state = zoomStates.value[imageUrl]
+    
+    const delta = event.deltaY > 0 ? -0.1 : 0.1
+    const newScale = Math.max(1, Math.min(3, state.scale + delta))
+    
+    // Only prevent default if we're actually zooming (scale > 1) or can zoom in
+    if (state.scale > 1 || (state.scale === 1 && delta > 0)) {
+      event.preventDefault()
+      state.scale = newScale
+      
+      // Reset position when zooming out to 1
+      if (newScale === 1) {
+        state.translateX = 0
+        state.translateY = 0
+      }
+    }
+  } else {
+    // Mouse is outside container, allow normal scrolling
+    return true
+  }
+}
+
+// Handle mouse down for dragging
+const handleMouseDown = (event, imageUrl) => {
+  // Only allow dragging if this image is active and zoomed
+  if (activeImageUrl.value !== imageUrl) return
+  
+  const state = zoomStates.value[imageUrl]
+  if (!state || state.scale <= 1) return
+  
+  isDragging.value = true
+  lastMousePos.value = { x: event.clientX, y: event.clientY }
+  event.preventDefault()
+}
+
+// Handle mouse move for dragging
+const handleMouseMove = (event, imageUrl) => {
+  if (!isDragging.value) return
+  
+  const state = zoomStates.value[imageUrl]
+  if (!state) return
+  
+  const deltaX = event.clientX - lastMousePos.value.x
+  const deltaY = event.clientY - lastMousePos.value.y
+  
+  state.translateX += deltaX / state.scale
+  state.translateY += deltaY / state.scale
+  
+  lastMousePos.value = { x: event.clientX, y: event.clientY }
+}
+
+// Handle mouse up
+const handleMouseUp = () => {
+  isDragging.value = false
+}
+
+// Reset zoom for an image
+const resetZoom = (imageUrl) => {
+  initZoomState(imageUrl)
+  const state = zoomStates.value[imageUrl]
+  state.scale = 1
+  state.translateX = 0
+  state.translateY = 0
+  // Clear active image when resetting
+  if (activeImageUrl.value === imageUrl) {
+    activeImageUrl.value = null
+  }
+}
+
 const handleEsc = (e) => {
   if (e.key === 'Escape' && showModal.value) {
     closeModal();
@@ -207,18 +382,24 @@ const openModal = async (project) => {
   // Load image dimensions if project has images
   if (project.images && project.images.length > 0) {
     await Promise.all(project.images.map(image => loadImageDimensions(image.url)));
+    // Initialize zoom states for all images
+    project.images.forEach(image => initZoomState(image.url));
     imagesLoaded.value = true;
   }
   
   showModal.value = true;
   document.body.classList.add('overflow-hidden');
   window.addEventListener('keydown', handleEsc);
+  window.addEventListener('mouseup', handleMouseUp);
 };
 
 const closeModal = () => {
   showModal.value = false;
   document.body.classList.remove('overflow-hidden');
-    window.removeEventListener('keydown', handleEsc);
+  window.removeEventListener('keydown', handleEsc);
+  window.removeEventListener('mouseup', handleMouseUp);
+  isDragging.value = false;
+  activeImageUrl.value = null;
 };
 
 
