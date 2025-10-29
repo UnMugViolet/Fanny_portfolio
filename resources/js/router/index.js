@@ -50,20 +50,4 @@ const router = createRouter({
   }
 })
 
-// Add navigation guards to prevent rapid navigation
-let lastNavigationTime = 0
-router.beforeEach((to, from, next) => {
-  const now = Date.now()
-  const timeSinceLastNavigation = now - lastNavigationTime
-  
-  // Prevent navigation if less than 100ms since last navigation
-  if (timeSinceLastNavigation < 100 && to.path !== from.path) {
-    console.log('Navigation blocked - too rapid')
-    return false
-  }
-  
-  lastNavigationTime = now
-  next()
-})
-
 export default router

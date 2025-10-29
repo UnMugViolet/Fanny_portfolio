@@ -15,11 +15,11 @@
 	<link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
 
 	<!-- SEO -->
-    <meta name="description" content="">
-    <meta property="og:title" content="">
-    <meta property="og:description" content="">
-    <meta property="og:image" content="">
-	<meta name="robots" content="">
+    <meta name="description" content="Politique de confidentialité de Fanny Séraudie Portfolio.">
+    <meta property="og:title" content="Politique de confidentialité | Fanny Séraudie Portfolio">
+    <meta property="og:description" content="Politique de confidentialité de Fanny Séraudie Portfolio.">
+    <meta property="og:image" content="{{ asset('img/logo-fanny-seraudie.webp') }}">
+	<meta name="robots" content="noindex, nofollow">
 
 	<!-- Styles and Scripts -->
 	@vite(['resources/css/app.css', 'resources/js/app.js'])

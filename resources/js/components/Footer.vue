@@ -40,7 +40,7 @@
 				<p>&copy;{{ currentYear }} Fanny Séraudie Portfolio. Tous droits réservés.</p>
 			</div>
 			<div class="container mx-auto text-center text-sm mt-2">
-				Site web réalisé par <a href="https://www.pauljaguin.com" target="_blank"
+				Site web réalisé par <a href="https://pauljaguin.com" target="_blank"
 					class="text-blue-400 hover:underline">Paul Jaguin</a>
 			</div>
 		</section>
