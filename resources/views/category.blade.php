@@ -8,6 +8,12 @@
 	<!-- CSRF Token -->
 	<meta name="csrf-token" content="{{ csrf_token() }}">
 
+	<!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ asset('favicon.ico') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ asset('favicon.ico') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon.ico') }}">
+
 	<!-- SEO -->
     <meta name="description" content="{{ $category->meta_description ?? 'Retrouvez la liste de nos articles sur des sujets variés afin de prendre soin de votre animal de compagnie' }}">
     <meta property="og:title" content="{{ $category->meta_title ?? $category->name ?? 'Fanny Séraudie' }}">
