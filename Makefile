@@ -61,6 +61,7 @@ up: ## Start the production environment
 	@echo "$(CLR_YELLOW) Starting production environment...$(CLR_RESET)"
 	@$(DOCKER_COMPOSE) up -d
 	@$(MAKE) clean
+	@$(MAKE) migrate
 
 prod: ## Start the production containers
 	@$(DOCKER_COMPOSE) -f docker-compose.prod.yml up -d

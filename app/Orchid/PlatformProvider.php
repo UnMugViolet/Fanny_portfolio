@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace App\Orchid;
 
-use Orchid\Platform\Dashboard;
 use Orchid\Platform\ItemPermission;
+use Orchid\Platform\Orchid;
 use Orchid\Platform\OrchidServiceProvider;
 use Orchid\Screen\Actions\Menu;
 use Orchid\Support\Color;
@@ -14,14 +14,10 @@ class PlatformProvider extends OrchidServiceProvider
 {
     /**
      * Bootstrap the application services.
-     *
-     * @param Dashboard $dashboard
-     *
-     * @return void
      */
-    public function boot(Dashboard $dashboard): void
+    public function boot(Orchid $orchid): void
     {
-        parent::boot($dashboard);
+        parent::boot($orchid);
 
         // ...
     }

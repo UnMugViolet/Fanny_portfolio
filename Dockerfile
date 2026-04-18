@@ -3,7 +3,7 @@
 # ================================
 # Development Stage
 # ================================
-FROM php:8.3-fpm AS development
+FROM php:8.4-fpm AS development
 
 # Set working directory
 WORKDIR /var/www/html
@@ -50,6 +50,7 @@ COPY . .
 
 # Install dependencies
 RUN composer install --optimize-autoloader --no-interaction \
+    && php artisan vendor:publish --tag=laravel-assets --force \
     && npm install \
     && npm audit fix --force || true
 
@@ -78,7 +79,7 @@ CMD ["/usr/local/bin/laravel-start.sh"]
 # ================================
 # Production Stage
 # ================================
-FROM php:8.3-fpm AS production
+FROM php:8.4-fpm AS production
 
 # Set working directory
 WORKDIR /var/www/html
@@ -115,7 +116,8 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 COPY . .
 
 # Install PHP dependencies (production only)
-RUN composer install --no-dev --optimize-autoloader --no-interaction
+RUN composer install --no-dev --optimize-autoloader --no-interaction \
+    && php artisan vendor:publish --tag=laravel-assets --force
 
 # Install ALL npm dependencies for building (including dev dependencies)
 RUN npm ci
