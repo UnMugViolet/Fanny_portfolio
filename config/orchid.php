@@ -15,7 +15,7 @@ return [
     */
     'middleware' => [
         'public'  => ['web', 'cache.headers:private;must_revalidate;etag'],
-        'private' => ['web', 'orchid:platform.index', 'cache.headers:private;must_revalidate;etag'],
+        'private' => ['web', 'orchid:orchid.index', 'cache.headers:private;must_revalidate;etag'],
     ],
 
     /*

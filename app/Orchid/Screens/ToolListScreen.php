@@ -3,11 +3,13 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Tool;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Support\Facades\Layout;
+use Orchid\Support\Facades\Toast;
 use Orchid\Screen\TD;
 
 class ToolListScreen extends Screen
@@ -110,5 +112,20 @@ class ToolListScreen extends Screen
                     }),
             ]),
         ];
+    }
+
+    /**
+     * Remove the specified tool.
+     */
+    public function remove(Request $request)
+    {
+        $toolId = (int) $request->input('id');
+        $tool = Tool::findOrFail($toolId);
+
+        $tool->delete();
+
+        Toast::info('L\'outil a été supprimé avec succès.');
+
+        return redirect()->route('platform.tools');
     }
 }

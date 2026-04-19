@@ -9,9 +9,9 @@ use Orchid\Screen\TD;
 use Orchid\Support\Facades\Layout;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Actions\DropDown;
-use Orchid\Support\Facades\Alert;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Orchid\Support\Facades\Toast as FacadesToast;
 
 class CategoryListScreen extends Screen
 {
@@ -158,10 +158,15 @@ class CategoryListScreen extends Screen
     /**
      * Remove category
      */
-    public function remove(Request $request): void
+    public function remove(Request $request)
     {
-        Category::findOrFail($request->get('id'))->delete();
+        $categoryId = (int) $request->input('id');
+        $category = Category::findOrFail($categoryId);
 
-        Alert::info(__('Catégorie supprimée avec succès.'));
+        $category->delete();
+
+        FacadesToast::info(__('Catégorie supprimée avec succès.'));
+
+        return redirect()->route('platform.categories');
     }
 }

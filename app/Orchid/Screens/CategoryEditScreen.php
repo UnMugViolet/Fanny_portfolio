@@ -83,7 +83,7 @@ class CategoryEditScreen extends Screen
                     Input::make('category.order')
                         ->title('Ordre')
                         ->type('number')
-                        ->placeholder(Category::max('order') + 1)
+                        ->placeholder((Category::max('order') ?? 0) + 1)
                         ->min(1)
                         ->help('Ordre d\'affichage (plus petit = affiché en premier)'),
 
@@ -140,7 +140,11 @@ class CategoryEditScreen extends Screen
             'category.no_index' => 'sometimes|boolean',
         ]);
 
-        $data = $request->get('category');
+        $data = $request->input('category', []);
+
+        if (!isset($data['order']) || $data['order'] === null || $data['order'] === '') {
+            $data['order'] = (Category::max('order') ?? 0) + 1;
+        }
         
         // Generate slug if not provided
         if (empty($data['slug'])) {

@@ -3,6 +3,7 @@
 namespace App\Orchid\Screens;
 
 use App\Models\Project;
+use Illuminate\Http\Request;
 use Orchid\Screen\Actions\Link;
 use Orchid\Screen\Screen;
 use Orchid\Screen\TD;
@@ -156,7 +157,7 @@ class ProjectListScreen extends Screen
                                     ->method('remove')
                                     ->parameters([
                                         'id' => $project->id,
-                            ]),
+                                    ]),
                         ]);
                 }),
             ])
@@ -170,8 +171,11 @@ class ProjectListScreen extends Screen
      * @return \Illuminate\Http\RedirectResponse
      * @throws \Exception
      */
-    public function remove(Project $project)
+    public function remove(Request $request)
     {
+        $projectId = (int) $request->input('id');
+        $project = Project::findOrFail($projectId);
+
         $project->delete();
 
         Toast::info('Le projet a été supprimé avec succès.');

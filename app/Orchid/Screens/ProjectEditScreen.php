@@ -4,16 +4,15 @@ namespace App\Orchid\Screens;
 
 use App\Models\Category;
 use App\Models\Project;
+use App\Models\Tool;
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
-use Orchid\Attachment\Models\Attachment;
-use Orchid\Support\Facades\Alert;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 use Orchid\Screen\Actions\Button;
 use Orchid\Screen\Fields\Attach;
 use Orchid\Screen\Fields\Input;
 use Orchid\Screen\Fields\Quill;
-use Orchid\Screen\Fields\Relation;
 use Orchid\Screen\Fields\Select;
 use Orchid\Support\Facades\Layout;
 use Orchid\Screen\Screen;
@@ -33,6 +32,8 @@ class ProjectEditScreen extends Screen
      */
     public function query(Project $project): iterable
     {
+        $project->loadMissing(['categories:id,name', 'tools:id,name']);
+
         return [
             'project' => $project
         ];
@@ -117,20 +118,20 @@ class ProjectEditScreen extends Screen
                         ->default('draft')
                         ->help('Statut de publication du projet'),
 
-                    Relation::make('project.author_id')
+                    Select::make('project.author_id')
                         ->title('Auteur')
-                        ->fromModel(\App\Models\User::class, 'name')
-                        ->displayAppend('name')
-                        ->placeholder(User::find(1)->name ?? 'Sélectionnez un auteur')
-                        ->default(User::find(1)?->id ? : null)
+                        ->fromQuery(User::query()->orderBy('name'), 'name')
+                        ->empty('Sélectionnez un auteur')
+                        ->placeholder(User::query()->first()?->name ?? 'Sélectionnez un auteur')
+                        ->value(old('project.author_id', $this->project->author_id ?? User::query()->value('id')))
                         ->help('Sélectionnez l\'auteur du post'),
 
-                    Relation::make('project.categories.')
+                    Select::make('project.categories')
                         ->title('Catégories')
-                        ->fromModel(Category::class, 'name')
+                        ->fromQuery(Category::query()->orderBy('name'), 'name')
                         ->multiple()
                         ->placeholder(Category::first() ?->name ?? 'Aucune catégorie disponible')
-                        ->default(Category::first() ?->id ? : null)
+                        ->value(old('project.categories', $this->project->categories->pluck('id')->all()))
                         ->help('Assignez des catégories au projet'),
 
                     Attach::make('project.thumbnail')
@@ -145,10 +146,11 @@ class ProjectEditScreen extends Screen
                         ->help('Téléchargez une image miniature pour le projet'),
                 ]),
                 'Outils' => Layout::rows([
-                    Relation::make('project.tools')
+                    Select::make('project.tools')
                         ->title('Outils utilisés')
-                        ->fromModel(\App\Models\Tool::class, 'name')
+                        ->fromQuery(Tool::query()->orderBy('name'), 'name')
                         ->multiple()
+                        ->value(old('project.tools', $this->project->tools->pluck('id')->all()))
                         ->placeholder('Sélectionnez les outils utilisés dans ce projet')
                         ->help('Assignez des outils au projet pour indiquer les technologies ou logiciels utilisés'),
                 ]),
@@ -185,12 +187,23 @@ class ProjectEditScreen extends Screen
     public function save(Project $project, Request $request)
     {
 
+        $authorId = data_get($request->input('project', []), 'author_id')
+            ?? User::query()->value('id');
+
+        if ($authorId !== null) {
+            $request->merge([
+                'project' => array_merge($request->input('project', []), [
+                    'author_id' => $authorId,
+                ]),
+            ]);
+        }
+
         $request->validate([
             'project.order' => 'nullable|integer|min:1',
             'project.title' => 'required|string|max:255',
             'project.description' => 'required|string',
             'project.status' => 'required|in:draft,published,archived',
-            'project.author_id' => 'required|exists:users,id',
+            'project.author_id' => 'nullable|exists:users,id',
             'project.categories' => 'nullable|array',
             'project.categories.*' => 'exists:categories,id',
             'project.thumbnail' => 'nullable',
@@ -208,17 +221,20 @@ class ProjectEditScreen extends Screen
         $project->fill($data)->save();
 
 
-        if (isset($data['categories'])) {
-            $project->categories()->sync($data['categories']);
-        } else {
-            $project->categories()->detach();
-        }
+        $categoryIds = collect(Arr::wrap(data_get($request->input('project', []), 'categories', [])))
+            ->filter(fn ($id) => is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
 
-        if (isset($data['tools'])) {
-            $project->tools()->sync($data['tools']);
-        } else {
-            $project->tools()->detach();
-        }
+        $toolIds = collect(Arr::wrap(data_get($request->input('project', []), 'tools', [])))
+            ->filter(fn ($id) => is_numeric($id))
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+
+        $project->categories()->sync($categoryIds);
+        $project->tools()->sync($toolIds);
 
         // Handle thumbnail and images (MorphToMany relationship)
         $newThumbnailId = is_array($data['thumbnail']) ? $data['thumbnail'] : [$data['thumbnail']];
@@ -256,15 +272,18 @@ class ProjectEditScreen extends Screen
      */
     public function remove(Project $project)
     {
-        // Get all attachments before detaching to delete physical files
-        $imageAttachments = $project->attachments();
+        // Fetch related attachments as a collection before deleting the project.
+        $imageAttachments = $project->attachments()->get();
 
         // Detach relationships
         $project->categories()->detach();
         $project->tools()->detach();
 
         foreach ($imageAttachments as $attachment) {
-            $attachment->delete();
+            if ($attachment !== null) {
+                Log::info($attachment);
+                $attachment->delete();
+            }
         }
 
         $project->delete();

@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Orchid\Attachment\Models\Attachment;
 
-class AttachmentClear extends Command
+class AttachmentClearCommand extends Command
 {
     /**
      * The name and signature of the console command.

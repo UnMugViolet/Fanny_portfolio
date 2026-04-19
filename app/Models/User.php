@@ -66,4 +66,25 @@ class User extends Authenticatable
         'updated_at',
         'created_at',
     ];
+
+    /**
+     * Backward-compatible access check for renamed Orchid permissions.
+     */
+    public function hasAccess(string $permit, bool $cache = true): bool
+    {
+        if (parent::hasAccess($permit, $cache)) {
+            return true;
+        }
+
+        $fallbackPermissions = [
+            'orchid.attachment' => 'platform.systems.attachment',
+            'orchid.index' => 'platform.index',
+        ];
+
+        $legacyPermit = $fallbackPermissions[$permit] ?? null;
+
+        return $legacyPermit !== null
+            ? parent::hasAccess($legacyPermit, $cache)
+            : false;
+    }
 }
