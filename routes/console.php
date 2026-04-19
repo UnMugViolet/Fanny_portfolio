@@ -1,6 +1,6 @@
 <?php
 
-use App\Console\Commands\AttachmentClear;
+use App\Console\Commands\AttachmentClearCommand;
 use Illuminate\Support\Facades\Schedule;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -10,4 +10,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 // Custom command to clear unattached files
-Schedule::command(AttachmentClear::class)->weekly('2:00');
+Schedule::command(AttachmentClearCommand::class)->weekly('2:00');
